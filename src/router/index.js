@@ -69,7 +69,7 @@ export const constantRoutes = [
       path: 'index',
       name: 'Short',
       component: () => import('@/views/shortpredict/index'),
-      meta: { title: '短期功率预测', icon: 'table' }
+      meta: { title: '短期功率预测', icon: 'example' }
     }]
   },
 
@@ -82,66 +82,21 @@ export const constantRoutes = [
         path: 'index',
         name: 'Weather',
         component: () => import('@/views/weather/index'),
-        meta: { title: '气象监控', icon: 'form' }
+        meta: { title: '气象监控', icon: 'international' }
       }
     ]
   },
 
   {
-    path: '/query',
+    path: '/settings',
     component: Layout,
-    redirect: '/query/menu1',
-    name: 'Nested',
-    meta: {
-      title: '功率查询',
-      icon: 'nested'
-    },
+    redirect: '/settings/index',
     children: [
       {
-        path: 'menu1',
-        component: () => import('@/views/nested/menu1/index'), // Parent router-view
-        name: 'Menu1',
-        meta: { title: 'Menu1' },
-        children: [
-          {
-            path: 'menu1-1',
-            component: () => import('@/views/nested/menu1/menu1-1'),
-            name: 'Menu1-1',
-            meta: { title: 'Menu1-1' }
-          },
-          {
-            path: 'menu1-2',
-            component: () => import('@/views/nested/menu1/menu1-2'),
-            name: 'Menu1-2',
-            meta: { title: 'Menu1-2' },
-            children: [
-              {
-                path: 'menu1-2-1',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
-                name: 'Menu1-2-1',
-                meta: { title: 'Menu1-2-1' }
-              },
-              {
-                path: 'menu1-2-2',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
-                name: 'Menu1-2-2',
-                meta: { title: 'Menu1-2-2' }
-              }
-            ]
-          },
-          {
-            path: 'menu1-3',
-            component: () => import('@/views/nested/menu1/menu1-3'),
-            name: 'Menu1-3',
-            meta: { title: 'Menu1-3' }
-          }
-        ]
-      },
-      {
-        path: 'menu2',
-        component: () => import('@/views/nested/menu2/index'),
-        name: 'Menu2',
-        meta: { title: 'menu2' }
+        path: 'index',
+        name: 'Settings',
+        component: () => import('@/views/settings/index'),
+        meta: { title: '设置', icon: 'user' }
       }
     ]
   },

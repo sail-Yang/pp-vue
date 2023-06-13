@@ -70,7 +70,7 @@
       <el-form :model="exportform">
         <el-form-item>
           <label class="radio-label">文件名: </label>
-          <el-input v-model="filename" placeholder="默认为weather" prefix-icon="el-icon-document" />
+          <el-input v-model="exportform.filename" placeholder="默认为weather" prefix-icon="el-icon-document" />
         </el-form-item>
         <el-form-item>
           <label class="radio-label">自动宽度: </label>
