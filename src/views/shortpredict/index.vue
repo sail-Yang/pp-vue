@@ -112,7 +112,7 @@
 </template>
 
 <script>
-import Chart from '@/views/rollout/short/ShortLineChart'
+import Chart from '@/views/shortpredict/ShortLineChart'
 import { predictByPeriod } from '@/api/fandata'
 import { formDateFormat } from '@/utils'
 export default {
@@ -155,7 +155,8 @@ export default {
           }
         }]
       },
-      loading: false
+      loading: false,
+      abortController: new AbortController()
     }
   },
   mounted() {
@@ -176,7 +177,7 @@ export default {
       sessionStorage.setItem('periodLoading', this.loading)
       var beginTime = formDateFormat(this.form.startDate, this.form.startTime)
       var endTime = formDateFormat(this.form.endDate, this.form.endTime)
-      predictByPeriod(beginTime, endTime, this.form.hours, this.form.fan).then(
+      predictByPeriod(beginTime, endTime, this.form.hours, this.form.fan, this.abortController.signal).then(
         response => {
           sessionStorage.setItem('periodXdata', JSON.stringify(response.data))
           this.xdata = JSON.parse(sessionStorage.getItem('periodXdata'))
@@ -186,7 +187,6 @@ export default {
           })
           this.loading = false
           sessionStorage.setItem('periodLoading', this.loading)
-          console.log(this.loading)
         }
       ).catch(() => {
         this.loading = false
@@ -194,6 +194,8 @@ export default {
       })
     },
     onCancel() {
+      debugger
+      this.abortController.abort()
       sessionStorage.setItem('periodFan', this.form.fan)
       this.loading = false
       sessionStorage.setItem('periodLoading', this.loading)

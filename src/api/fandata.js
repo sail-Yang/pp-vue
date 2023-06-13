@@ -16,10 +16,11 @@ export function predictByRealTime(fanid) {
   })
 }
 
-export function predictByPeriod(bgtime, edtime, hours, fanid) {
+export function predictByPeriod(bgtime, edtime, hours, fanid, signal) {
   return request({
     url: '/predict/period',
     method: 'get',
-    params: { bgtime, edtime, hours, fanid }
+    params: { bgtime, edtime, hours, fanid },
+    signal: signal
   })
 }

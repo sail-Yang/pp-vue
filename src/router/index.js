@@ -62,24 +62,15 @@ export const constantRoutes = [
   },
 
   {
-    path: '/rollout',
+    path: '/short',
     component: Layout,
-    name: 'Rollout',
-    meta: { title: '滚动功率预测', icon: 'el-icon-s-help' },
-    children: [
-      {
-        path: '/short',
-        name: 'Short',
-        component: () => import('@/views/rollout/short/index'),
-        meta: { title: '短期功率预测', icon: 'table' }
-      },
-      {
-        path: '/supershort',
-        name: 'Supershort',
-        component: () => import('@/views/rollout/supershort/index'),
-        meta: { title: '超短期功率预测', icon: 'tree' }
-      }
-    ]
+    redirect: '/index',
+    children: [{
+      path: 'index',
+      name: 'Short',
+      component: () => import('@/views/shortpredict/index'),
+      meta: { title: '短期功率预测', icon: 'table' }
+    }]
   },
 
   {
