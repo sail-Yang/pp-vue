@@ -52,6 +52,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">提交</el-button>
+          <el-button type="primary" @click="dialogVisible = true">导出</el-button>
         </el-form-item>
       </el-form>
     </el-row>
@@ -60,6 +61,45 @@
         <chart height="100%" width="100%" :xdata="xdata" :fanid="form.fan" />
       </div>
     </el-row>
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogVisible"
+      width="30%"
+      :before-close="handleClose"
+    >
+      <el-form :model="exportform">
+        <el-form-item>
+          <label class="radio-label">文件名: </label>
+          <el-input v-model="filename" placeholder="默认为weather" prefix-icon="el-icon-document" />
+        </el-form-item>
+        <el-form-item>
+          <label class="radio-label">自动宽度: </label>
+          <el-radio-group v-model="exportform.autoWidth">
+            <el-radio :label="true" border>
+              True
+            </el-radio>
+            <el-radio :label="false" border>
+              False
+            </el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item>
+          <label class="radio-label">输出种类: </label>
+          <el-select v-model="exportform.type">
+            <el-option
+              v-for="item in options"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" icon="el-icon-document" @click="handleDownload">Export Excel</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -80,7 +120,15 @@ export default {
         fan: '1',
         loading: false
       },
+      exportform: {
+        filename: '',
+        autoWidth: true,
+        type: 'xlsx'
+      },
       xdata: {},
+      dialogVisible: false,
+      downloadLoading: false,
+      options: ['xlsx', 'csv', 'txt'],
       pickerOptions: {
         shortcuts: [{
           text: '今天',
@@ -112,6 +160,7 @@ export default {
       var endTime = formDateFormat(this.form.endDate, this.form.endTime)
       getWeatherByPeriod(beginTime, endTime, this.form.fan).then(
         response => {
+          sessionStorage.setItem('weatherXdata', JSON.stringify(response.data))
           this.xdata = response.data
           this.$message({
             message: '查询成功',
@@ -122,6 +171,41 @@ export default {
         this.loading = false
       })
       this.loading = false
+    },
+    handleClose(done) {
+      this.$confirm('确认关闭？')
+        .then(_ => {
+          done()
+        })
+        .catch(_ => {})
+    },
+    handleDownload() {
+      this.xdata = JSON.parse(sessionStorage.getItem('weatherXdata'))
+      this.downloadLoading = true
+      import('@/vendor/Export2Excel').then(excel => {
+        const tHeader = ['datatime', 'windSpeed', 'windDirection', 'temperature', 'humidity', 'pressure', 'ws']
+        const filterVal = ['datatime', 'windSpeed', 'windDirection', 'temperature', 'humidity', 'pressure', 'ws']
+        const list = this.xdata.fanDataList
+        const data = this.formatJson(filterVal, list)
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: this.exportform.filename || 'weather',
+          autoWidth: this.exportform.autoWidth,
+          bookType: this.exportform.type
+        })
+        this.downloadLoading = false
+      })
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => {
+        return v[j]
+        // if (j === 'timestamp') {
+        //   return parseTime(v[j])
+        // } else {
+        //   return v[j]
+        // }
+      }))
     }
   }
 }
