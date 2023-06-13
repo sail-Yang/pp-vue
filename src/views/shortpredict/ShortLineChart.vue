@@ -193,9 +193,9 @@ export default {
           type: 'line',
           itemStyle: {
             normal: {
-              color: '#3888fa',
+              color: '#487a47',
               lineStyle: {
-                color: '#3888fa',
+                color: '#487a47',
                 width: 2
               },
               areaStyle: {

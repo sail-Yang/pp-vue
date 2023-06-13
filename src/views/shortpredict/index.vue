@@ -99,6 +99,7 @@
           </el-form-item>
           <el-form-item>
             <el-button type="danger" @click="onCancel">取消预测</el-button>
+            <el-button type="info" @click="dialogVisible = true">导出数据</el-button>
           </el-form-item>
         </el-row>
       </el-form>
@@ -108,6 +109,45 @@
         <chart height="100%" width="100%" :xdata="xdata" :fanid="form.fan" />
       </div>
     </el-row>
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogVisible"
+      width="30%"
+      :before-close="handleClose"
+    >
+      <el-form :model="exportform">
+        <el-form-item>
+          <label class="radio-label">文件名: </label>
+          <el-input v-model="filename" placeholder="默认为predictData" prefix-icon="el-icon-document" />
+        </el-form-item>
+        <el-form-item>
+          <label class="radio-label">自动宽度: </label>
+          <el-radio-group v-model="exportform.autoWidth">
+            <el-radio :label="true" border>
+              True
+            </el-radio>
+            <el-radio :label="false" border>
+              False
+            </el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item>
+          <label class="radio-label">输出种类: </label>
+          <el-select v-model="exportform.type">
+            <el-option
+              v-for="item in options"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" icon="el-icon-document" @click="handleDownload">Export Excel</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -132,6 +172,14 @@ export default {
         predEndTime: '23:45',
         fan: '1'
       },
+      exportform: {
+        filename: '',
+        autoWidth: true,
+        type: 'xlsx'
+      },
+      dialogVisible: false,
+      downloadLoading: false,
+      options: ['xlsx', 'csv', 'txt'],
       xdata: {},
       pickerOptions: {
         shortcuts: [{
@@ -203,6 +251,36 @@ export default {
         message: '成功取消预测请求',
         type: 'warning'
       })
+    },
+    handleClose(done) {
+      this.$confirm('确认关闭？')
+        .then(_ => {
+          done()
+        })
+        .catch(_ => {})
+    },
+    handleDownload() {
+      this.xdata = JSON.parse(sessionStorage.getItem('realXdata'))
+      this.downloadLoading = true
+      import('@/vendor/Export2Excel').then(excel => {
+        const tHeader = ['datatime', 'yd15', 'power', 'prePower']
+        const filterVal = ['datatime', 'yd15', 'power', 'prePower']
+        const list = this.xdata.fanDataList
+        const data = this.formatJson(filterVal, list)
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: this.exportform.filename || 'predictData',
+          autoWidth: this.exportform.autoWidth,
+          bookType: this.exportform.type
+        })
+        this.downloadLoading = false
+      })
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => {
+        return v[j]
+      }))
     }
   }
 }

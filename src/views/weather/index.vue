@@ -52,7 +52,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">提交</el-button>
-          <el-button type="primary" @click="dialogVisible = true">导出</el-button>
+          <el-button type="info" @click="dialogVisible = true">导出数据</el-button>
         </el-form-item>
       </el-form>
     </el-row>
@@ -200,11 +200,6 @@ export default {
     formatJson(filterVal, jsonData) {
       return jsonData.map(v => filterVal.map(j => {
         return v[j]
-        // if (j === 'timestamp') {
-        //   return parseTime(v[j])
-        // } else {
-        //   return v[j]
-        // }
       }))
     }
   }
