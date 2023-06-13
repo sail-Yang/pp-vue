@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-row>
-      <el-form :model="form" label-width="80px" :inline="true">
+      <el-form v-loading="loading" element-loading-text="拼命加载中" :model="form" label-width="80px" :inline="true">
         <el-form-item label="时间段">
           <el-date-picker
             v-model="form.startDate"
@@ -15,7 +15,7 @@
             :picker-options="{
               start: '00:00',
               step: '00:15',
-              end: '23:30'
+              end: '23:45'
             }"
           />
           --
@@ -30,7 +30,7 @@
             :picker-options="{
               start: '00:30',
               step: '00:15',
-              end: '23:30',
+              end: '23:45',
               minTime: startTime
             }"
             placeholder="结束时间"
@@ -51,33 +51,34 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">提交</el-button>
-          <el-button @click="onReset">重置</el-button>
+          <el-button type="primary" @click="onSubmit">查询功率</el-button>
+          <el-button type="danger" @click="onReset">查看实时</el-button>
         </el-form-item>
       </el-form>
     </el-row>
     <el-row>
       <div class="chart-container">
-        <chart height="100%" width="100%" :xdata="xdata" />
+        <chart height="100%" width="100%" :xdata="xdata" :fanid="form.fan" />
       </div>
     </el-row>
   </div>
 </template>
 
 <script>
-import Chart from '@/components/Charts/LineMarker'
-import { getFanDataByPeriod } from '@/api/fandata'
+import Chart from '@/views/realtime/RealTimeLineChart'
+import { getFanDataByPeriod, predictByRealTime } from '@/api/fandata'
+import { formDateFormat } from '@/utils'
 export default {
   name: 'Realtime',
   components: { Chart },
   data() {
     return {
       form: {
-        startDate: '',
-        startTime: '',
-        endDate: '',
-        endTime: '',
-        fan: ''
+        startDate: '2021-1-2',
+        startTime: '00:00',
+        endDate: '2021-1-2',
+        endTime: '23:45',
+        fan: '1'
       },
       xdata: {},
       pickerOptions: {
@@ -101,25 +102,63 @@ export default {
             picker.$emit('pick', date)
           }
         }]
-      }
+      },
+      loading: false
+    }
+  },
+  mounted() {
+    if (sessionStorage.getItem('realLoading') !== null) {
+      this.loading = (sessionStorage.getItem('realLoading').toLowerCase() === 'true')
+    }
+    this.xdata = JSON.parse(sessionStorage.getItem('realXdata'))
+    if (sessionStorage.getItem('realFan') === null) {
+      this.form.fan = '1'
+    } else {
+      this.form.fan = sessionStorage.getItem('realFan')
     }
   },
   methods: {
     onSubmit() {
-      debugger
-      console.log('date:' + this.form.startDate)
-      console.log('time:' + this.form.startTime)
-      getFanDataByPeriod(this.form.startDate + this.form.startTime, this.form.endDate + this.form.endTime, this.form.fan).then(
+      sessionStorage.setItem('realFan', this.form.fan)
+      this.loading = true
+      sessionStorage.setItem('realLoading', this.loading)
+      var beginTime = formDateFormat(this.form.startDate, this.form.startTime)
+      var endTime = formDateFormat(this.form.endDate, this.form.endTime)
+      getFanDataByPeriod(beginTime, endTime, this.form.fan).then(
         response => {
-          this.xdata = response.data
+          sessionStorage.setItem('realXdata', JSON.stringify(response.data))
+          this.xdata = JSON.parse(sessionStorage.getItem('realXdata'))
+          this.$message('提交成功!')
+          this.loading = false
+          sessionStorage.setItem('realLoading', this.loading)
         }
-      )
-      this.$message('提交成功!')
+      ).catch(() => {
+        this.loading = false
+        sessionStorage.setItem('realLoading', this.loading)
+      })
     },
     onReset() {
-      this.$message({
-        message: '重置成功',
-        type: 'success'
+      this.loading = true
+      sessionStorage.setItem('realLoading', this.loading)
+      sessionStorage.setItem('realFan', this.form.fan)
+      predictByRealTime(this.form.fan).then(
+        response => {
+          sessionStorage.setItem('realXdata', JSON.stringify(response.data))
+          this.xdata = JSON.parse(sessionStorage.getItem('realXdata'))
+          this.$message({
+            message: '实时查询成功',
+            type: 'success'
+          })
+          this.loading = false
+          sessionStorage.setItem('realLoading', this.loading)
+        }
+      ).catch(() => {
+        this.$message({
+          message: '服务器错误',
+          type: 'failure'
+        })
+        this.loading = false
+        sessionStorage.setItem('realLoading', this.loading)
       })
     }
   }

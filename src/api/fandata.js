@@ -1,17 +1,25 @@
 import request from '@/utils/request'
 
-export function getFanDataByIdAndTime(time, fanid) {
+export function getFanDataByPeriod(bgtime, edtime, fanid) {
   return request({
-    url: '/fan/getbytime',
+    url: '/fandata/period',
     method: 'get',
-    params: { time, fanid }
+    params: { bgtime, edtime, fanid }
   })
 }
 
-export function getFanDataByPeriod(bgtime, edtime, fanid) {
+export function predictByRealTime(fanid) {
   return request({
-    url: '/fan/init',
+    url: '/predict/realtime',
     method: 'get',
-    params: { bgtime, edtime, fanid }
+    params: { fanid }
+  })
+}
+
+export function predictByPeriod(bgtime, edtime, hours, fanid) {
+  return request({
+    url: '/predict/period',
+    method: 'get',
+    params: { bgtime, edtime, hours, fanid }
   })
 }

@@ -5,8 +5,9 @@
 <script>
 import * as echarts from 'echarts'
 require('echarts/theme/macarons') // echarts theme
-import resize from './mixins/resize'
-
+import resize from '@/components/Charts/mixins/resize'
+import { predictByRealTime } from '@/api/fandata'
+import { chartTimeFormat } from '@/utils'
 export default {
   mixins: [resize],
   props: {
@@ -29,6 +30,14 @@ export default {
     chartData: {
       type: Object,
       required: true
+    },
+    xdata: {
+      type: Object,
+      default(rawProps) { }
+    },
+    fanid: {
+      type: Number,
+      default: 1
     }
   },
   data() {
@@ -43,14 +52,30 @@ export default {
       handler(val) {
         this.setOptions(val)
       }
-    }
+    },
+    xdata: 'initChart'
   },
   mounted() {
     this.loading = true
     this.$nextTick(() => {
+      if (sessionStorage.getItem('periodXdata') !== null) {
+        this.xdata = JSON.parse(sessionStorage.getItem('periodXdata'))
+      } else {
+        predictByRealTime(this.fanid).then(
+          response => {
+            this.xdata = response.data
+          }
+        ).catch(() => {
+          this.$message({
+            message: '服务器错误',
+            type: 'failure'
+          })
+          this.loading = false
+        })
+      }
       this.initChart()
+      this.loading = false
     })
-    this.loading = false
   },
   beforeDestroy() {
     if (!this.chart) {
@@ -67,17 +92,28 @@ export default {
     },
     setOptions({ expectedData, actualData } = {}) {
       this.chart.setOption({
+        title: {
+          top: 50,
+          text: '功率预测 · ' + this.fanid + '号风机',
+          textStyle: {
+            fontWeight: 'normal',
+            fontSize: 18,
+            color: '#0a4494'
+          },
+          left: '5%'
+        },
         xAxis: {
-          data: ['08:00', '08:15', '08:30', '08:45', '09:00', '09:15', '09:30', '09:45', '10:00', '10:15', '10:30', '10:45'],
+          type: 'category',
+          data: this.xdata.fanDataList.map(item => chartTimeFormat(item.datatime)),
           boundaryGap: false,
           axisTick: {
             show: false
           }
         },
         grid: {
-          left: 10,
-          right: 10,
-          bottom: 20,
+          left: '2%',
+          right: '2%',
+          bottom: '2%',
           top: 30,
           containLabel: true
         },
@@ -112,11 +148,11 @@ export default {
           itemGap: 13,
           top: 30,
           icon: 'rect',
-          data: ['实时功率(POWER)', '预测功率1(YD15)', '预测功率2(PREPOWER)'],
+          data: ['实际功率(POWER)', '预测功率(YD15)', '预测功率(备选,PREPOWER)'],
           right: '4%'
         },
         series: [{
-          name: '实时功率(POWER)', itemStyle: {
+          name: '实际功率(POWER)', itemStyle: {
             normal: {
               color: '#FF005A',
               lineStyle: {
@@ -127,12 +163,12 @@ export default {
           },
           smooth: true,
           type: 'line',
-          data: [11177, 9388, 7888, 4556, 3850, 4000, 3206, 3636, 4825, 5110, 9316, 8400, 11177, 9388, 7888, 4556, 3850, 4000, 3206, 3636, 4825, 5110, 9316, 8400, 11177, 9388, 7888, 4556, 3850, 4000, 3206, 3636, 4825, 5110, 9316, 8400, 11177, 9388, 7888, 4556, 3850, 4000, 3206, 3636, 4825, 5110, 9316, 8400, 11177, 9388, 7888, 4556, 3850, 4000, 3206, 3636, 4825, 5110, 9316, 8400, 11177, 9388, 7888, 4556, 3850, 4000, 3206, 3636, 4825, 5110, 9316, 8400],
+          data: this.xdata.fanDataList.map(item => item.power),
           animationDuration: 2800,
           animationEasing: 'cubicInOut'
         },
         {
-          name: '预测功率1(YD15)',
+          name: '预测功率(YD15)',
           smooth: true,
           type: 'line',
           itemStyle: {
@@ -147,12 +183,12 @@ export default {
               }
             }
           },
-          data: [10707, 9502, 7886, 4431, 3529, 3452, 3328, 3804, 4248, 4835, 8462, 8169, 10707, 9502, 7886, 4431, 3529, 3452, 3328, 3804, 4248, 4835, 8462, 8169, 10707, 9502, 7886, 4431, 3529, 3452, 3328, 3804, 4248, 4835, 8462, 8169, 10707, 9502, 7886, 4431, 3529, 3452, 3328, 3804, 4248, 4835, 8462, 8169, 10707, 9502, 7886, 4431, 3529, 3452, 3328, 3804, 4248, 4835, 8462, 8169],
+          data: this.xdata.fanDataList.map(item => item.yd15),
           animationDuration: 2800,
           animationEasing: 'quadraticOut'
         },
         {
-          name: '预测功率2(PREPOWER)',
+          name: '预测功率(备选,PREPOWER)',
           smooth: true,
           type: 'line',
           itemStyle: {
@@ -167,7 +203,7 @@ export default {
               }
             }
           },
-          data: [22469, 22336, 22262, 21920, 21339, 20759, 20178, 19648, 19167, 18687, 4825, 4543, 22469, 22336, 22262, 21920, 21339, 20759, 20178, 19648, 19167, 18687, 4825, 4543, 22469, 22336, 22262, 21920, 21339, 20759, 20178, 19648, 19167, 18687, 4825, 4543, 22469, 22336, 22262, 21920, 21339, 20759, 20178, 19648, 19167, 18687, 4825, 4543, 22469, 22336, 22262, 21920, 21339, 20759, 20178, 19648, 19167, 18687, 4825, 4543],
+          data: this.xdata.fanDataList.map(item => item.prePower),
           animationDuration: 2800,
           animationEasing: 'quadraticOut'
         }

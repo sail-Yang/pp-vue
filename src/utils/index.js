@@ -356,7 +356,10 @@ export function removeClass(ele, cls) {
   }
 }
 
-export function chartTime(time) {
+/*
+ * 处理展示在表格的时间格式
+*/
+export function chartTimeFormat(time) {
   const date = new Date(time)
   const month = date.getMonth() + 1
   const day = date.getDate()
@@ -364,4 +367,17 @@ export function chartTime(time) {
   const minute = date.getMinutes()
   var formattedDate = `${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day} ${hour < 10 ? '0' + hour : hour}:${minute < 10 ? '0' + minute : minute}`
   return formattedDate
+}
+
+/*
+ * 将从表单中获取的Sat Jan 02 2021 00:00:00 GMT+0800转化为2021-01-02
+*/
+export function formDateFormat(formDate, formTime) {
+  const date1 = new Date(formDate)
+  const y = date1.getFullYear()
+  const m = date1.getMonth() + 1
+  const d = date1.getDate()
+  const res = y + '-' + m + '-' + d
+  formTime += ':00'
+  return res + ' ' + formTime
 }

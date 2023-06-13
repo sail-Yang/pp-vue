@@ -89,8 +89,8 @@ export const constantRoutes = [
     children: [
       {
         path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
+        name: 'Weather',
+        component: () => import('@/views/weather/index'),
         meta: { title: '气象监控', icon: 'form' }
       }
     ]

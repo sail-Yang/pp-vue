@@ -5,8 +5,8 @@
 <script>
 import * as echarts from 'echarts'
 import resize from './mixins/resize'
-import { getFanDataByPeriod } from '@/api/fandata'
-import { chartTime } from '@/utils'
+import { getFanDataByRealTime } from '@/api/fandata'
+import { chartTimeFormat } from '@/utils'
 export default {
   mixins: [resize],
   props: {
@@ -29,18 +29,24 @@ export default {
     xdata: {
       type: Object,
       default(rawProps) { }
+    },
+    fanid: {
+      type: Number,
+      default: 1
     }
   },
   data() {
     return {
-      chart: null
+      chart: null,
+      loading: false
     }
   },
   watch: {
     xdata: 'initChart'
   },
   mounted() {
-    getFanDataByPeriod('2021-1-2 00:00:00', '2021-1-2 23:45:00', 1).then(
+    this.loading = true
+    getFanDataByRealTime(this.fanid).then(
       response => {
         this.xdata = response.data
       }
@@ -56,12 +62,13 @@ export default {
   },
   methods: {
     initChart() {
+      this.loading = true
       this.chart = echarts.init(document.getElementById(this.id))
       this.chart.setOption({
-        backgroundColor: '#37334A',
+        backgroundColor: '#092836',
         title: {
           top: 20,
-          text: '实时功率预测',
+          text: '气象监控 · ' + this.fanid + '号风机',
           textStyle: {
             fontWeight: 'normal',
             fontSize: 18,
@@ -83,11 +90,16 @@ export default {
           itemWidth: 14,
           itemHeight: 5,
           itemGap: 13,
-          data: ['实时功率(POWER)', '预测功率1(YD15)', '预测功率2(PREPOWER)'],
+          data: ['预测风速(windSpeed)', '风向(windDirection)', '温度(temperature)', '湿度(humidity)', '压力(pressure)', '实际风速(ROUND(A.WS,1))'],
           right: '4%',
           textStyle: {
             fontSize: 12,
             color: '#F1F1F3'
+          },
+          selected: {
+            '风向(windDirection)': false,
+            '湿度(humidity)': false,
+            '压力(pressure)': false
           }
         },
         grid: {
@@ -105,7 +117,7 @@ export default {
               color: '#bdb7ac'
             }
           },
-          data: this.xdata.fanDataList.map(item => chartTime(item.datatime))
+          data: this.xdata.fanDataList.map(item => chartTimeFormat(item.datatime))
         }],
         yAxis: [{
           type: 'value',
@@ -131,7 +143,142 @@ export default {
           }
         }],
         series: [{
-          name: '实时功率(POWER)',
+          name: '预测风速(windSpeed)',
+          type: 'line',
+          smooth: true,
+          symbol: 'circle',
+          symbolSize: 5,
+          showSymbol: false,
+          lineStyle: {
+            normal: {
+              width: 1
+            }
+          },
+          areaStyle: {
+            normal: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                offset: 0,
+                color: 'rgba(178, 118, 181, 0.3)'
+              }, {
+                offset: 0.8,
+                color: 'rgba(178, 118, 181, 0)'
+              }], false),
+              shadowColor: 'rgba(0, 0, 0, 0.1)',
+              shadowBlur: 10
+            }
+          },
+          itemStyle: {
+            normal: {
+              color: 'rgb(178, 118, 181)',
+              borderColor: 'rgba(178, 118, 181,0.2)',
+              borderWidth: 12
+
+            }
+          },
+          data: this.xdata.fanDataList.map(item => item.windSpeed)
+        }, {
+          name: '风向(windDirection)',
+          type: 'line',
+          smooth: true,
+          symbol: 'circle',
+          symbolSize: 5,
+          showSymbol: false,
+          lineStyle: {
+            normal: {
+              width: 1
+            }
+          },
+          areaStyle: {
+            normal: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                offset: 0,
+                color: 'rgba(181, 179, 105, 0.3)'
+              }, {
+                offset: 0.8,
+                color: 'rgba(181, 179, 105, 0)'
+              }], false),
+              shadowColor: 'rgba(0, 0, 0, 0.1)',
+              shadowBlur: 10
+            }
+          },
+          itemStyle: {
+            normal: {
+              color: 'rgb(181, 179, 105)',
+              borderColor: 'rgba(181, 179, 105,0.2)',
+              borderWidth: 12
+
+            }
+          },
+          data: this.xdata.fanDataList.map(item => item.windDirection)
+        }, {
+          name: '温度(temperature)',
+          type: 'line',
+          smooth: true,
+          symbol: 'circle',
+          symbolSize: 5,
+          showSymbol: false,
+          lineStyle: {
+            normal: {
+              width: 1
+            }
+          },
+          areaStyle: {
+            normal: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                offset: 0,
+                color: 'rgba(0,136,212, 0.3)'
+              }, {
+                offset: 0.8,
+                color: 'rgba(0,136,212, 0)'
+              }], false),
+              shadowColor: 'rgba(0, 0, 0, 0.1)',
+              shadowBlur: 10
+            }
+          },
+          itemStyle: {
+            normal: {
+              color: 'rgb(0,136,212)',
+              borderColor: 'rgba(0,136,212,0.2)',
+              borderWidth: 12
+
+            }
+          },
+          data: this.xdata.fanDataList.map(item => item.temperature)
+        }, {
+          name: '湿度(humidity)',
+          type: 'line',
+          smooth: true,
+          symbol: 'circle',
+          symbolSize: 5,
+          showSymbol: false,
+          lineStyle: {
+            normal: {
+              width: 1
+            }
+          },
+          areaStyle: {
+            normal: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                offset: 0,
+                color: 'rgba(219, 50, 51, 0.3)'
+              }, {
+                offset: 0.8,
+                color: 'rgba(219, 50, 51, 0)'
+              }], false),
+              shadowColor: 'rgba(0, 0, 0, 0.1)',
+              shadowBlur: 10
+            }
+          },
+          itemStyle: {
+            normal: {
+              color: 'rgb(219,50,51)',
+              borderColor: 'rgba(219,50,51,0.2)',
+              borderWidth: 12
+            }
+          },
+          data: this.xdata.fanDataList.map(item => item.humidity)
+        }, {
+          name: '压力(pressure)',
           type: 'line',
           smooth: true,
           symbol: 'circle',
@@ -163,9 +310,9 @@ export default {
 
             }
           },
-          data: this.xdata.fanDataList.map(item => item.power)
+          data: this.xdata.fanDataList.map(item => item.pressure)
         }, {
-          name: '预测功率1(YD15)',
+          name: '实际风速(ROUND(A.WS,1))',
           type: 'line',
           smooth: true,
           symbol: 'circle',
@@ -180,10 +327,10 @@ export default {
             normal: {
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
                 offset: 0,
-                color: 'rgba(0, 136, 212, 0.3)'
+                color: 'rgba(119, 101, 181, 0.3)'
               }, {
                 offset: 0.8,
-                color: 'rgba(0, 136, 212, 0)'
+                color: 'rgba(119, 101, 181, 0)'
               }], false),
               shadowColor: 'rgba(0, 0, 0, 0.1)',
               shadowBlur: 10
@@ -191,48 +338,16 @@ export default {
           },
           itemStyle: {
             normal: {
-              color: 'rgb(0,136,212)',
-              borderColor: 'rgba(0,136,212,0.2)',
+              color: 'rgb(119, 101, 181)',
+              borderColor: 'rgba(119, 101, 181,0.27)',
               borderWidth: 12
 
             }
           },
-          data: this.xdata.fanDataList.map(item => item.yd15)
-        }, {
-          name: '预测功率2(PREPOWER)',
-          type: 'line',
-          smooth: true,
-          symbol: 'circle',
-          symbolSize: 5,
-          showSymbol: false,
-          lineStyle: {
-            normal: {
-              width: 1
-            }
-          },
-          areaStyle: {
-            normal: {
-              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                offset: 0,
-                color: 'rgba(219, 50, 51, 0.3)'
-              }, {
-                offset: 0.8,
-                color: 'rgba(219, 50, 51, 0)'
-              }], false),
-              shadowColor: 'rgba(0, 0, 0, 0.1)',
-              shadowBlur: 10
-            }
-          },
-          itemStyle: {
-            normal: {
-              color: 'rgb(219,50,51)',
-              borderColor: 'rgba(219,50,51,0.2)',
-              borderWidth: 12
-            }
-          },
-          data: this.xdata.fanDataList.map(item => item.prePower)
+          data: this.xdata.fanDataList.map(item => item.ws)
         }]
       })
+      this.loading = false
     }
   }
 }
