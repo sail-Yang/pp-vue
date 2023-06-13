@@ -1,11 +1,11 @@
 <template>
-  <div :id="id" :class="className" :style="{height:height,width:width}" />
+  <div :id="id" v-loading="loading" element-loading-text="拼命加载中" :class="className" :style="{height:height,width:width}" />
 </template>
 
 <script>
 import * as echarts from 'echarts'
-import resize from './mixins/resize'
-import { getFanDataByRealTime } from '@/api/fandata'
+import resize from '@/components/Charts/mixins/resize'
+import { getWeatherByRealTime } from '@/api/fandata'
 import { chartTimeFormat } from '@/utils'
 export default {
   mixins: [resize],
@@ -46,11 +46,22 @@ export default {
   },
   mounted() {
     this.loading = true
-    getFanDataByRealTime(this.fanid).then(
-      response => {
-        this.xdata = response.data
-      }
-    )
+    if (sessionStorage.getItem('weatherXdata') !== null) {
+      this.xdata = JSON.parse(sessionStorage.getItem('weatherXdata'))
+    } else {
+      getWeatherByRealTime(1).then(
+        response => {
+          sessionStorage.setItem('weatherXdata', JSON.stringify(response.data))
+          this.xdata = JSON.parse(sessionStorage.getItem('weatherXdata'))
+        }
+      ).catch(() => {
+        this.$message({
+          message: '服务器错误',
+          type: 'failure'
+        })
+        this.loading = false
+      })
+    }
     this.initChart()
   },
   beforeDestroy() {
@@ -62,10 +73,9 @@ export default {
   },
   methods: {
     initChart() {
-      this.loading = true
       this.chart = echarts.init(document.getElementById(this.id))
       this.chart.setOption({
-        backgroundColor: '#092836',
+        backgroundColor: '#333b4a',
         title: {
           top: 20,
           text: '气象监控 · ' + this.fanid + '号风机',

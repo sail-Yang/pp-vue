@@ -128,7 +128,10 @@ export default {
         response => {
           sessionStorage.setItem('realXdata', JSON.stringify(response.data))
           this.xdata = JSON.parse(sessionStorage.getItem('realXdata'))
-          this.$message('提交成功!')
+          this.$message({
+            message: '查询成功',
+            type: 'success'
+          })
           this.loading = false
           sessionStorage.setItem('realLoading', this.loading)
         }
@@ -146,7 +149,7 @@ export default {
           sessionStorage.setItem('realXdata', JSON.stringify(response.data))
           this.xdata = JSON.parse(sessionStorage.getItem('realXdata'))
           this.$message({
-            message: '实时查询成功',
+            message: '获取实时成功',
             type: 'success'
           })
           this.loading = false

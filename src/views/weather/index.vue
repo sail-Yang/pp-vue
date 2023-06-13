@@ -52,7 +52,6 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">提交</el-button>
-          <el-button @click="onReset">重置</el-button>
         </el-form-item>
       </el-form>
     </el-row>
@@ -65,8 +64,8 @@
 </template>
 
 <script>
-import Chart from '@/components/Charts/WeatherChart'
-import { getFanDataByPeriod, getFanDataByRealTime } from '@/api/fandata'
+import Chart from '@/views/weather/WeatherChart'
+import { getWeatherByPeriod } from '@/api/fandata'
 import { formDateFormat } from '@/utils'
 export default {
   name: 'Weather',
@@ -74,9 +73,9 @@ export default {
   data() {
     return {
       form: {
-        startDate: '2021-1-2',
+        startDate: '2021-10-1',
         startTime: '00:00',
-        endDate: '2021-1-2',
+        endDate: '2021-10-1',
         endTime: '23:45',
         fan: '1',
         loading: false
@@ -111,23 +110,11 @@ export default {
       this.loading = true
       var beginTime = formDateFormat(this.form.startDate, this.form.startTime)
       var endTime = formDateFormat(this.form.endDate, this.form.endTime)
-      getFanDataByPeriod(beginTime, endTime, this.form.fan).then(
-        response => {
-          this.xdata = response.data
-          this.$message('提交成功!')
-        }
-      ).catch(() => {
-        this.loading = false
-      })
-      this.loading = false
-    },
-    onReset() {
-      this.loading = true
-      getFanDataByRealTime(this.form.fan).then(
+      getWeatherByPeriod(beginTime, endTime, this.form.fan).then(
         response => {
           this.xdata = response.data
           this.$message({
-            message: '重置成功',
+            message: '查询成功',
             type: 'success'
           })
         }

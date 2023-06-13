@@ -24,3 +24,19 @@ export function predictByPeriod(bgtime, edtime, hours, fanid, signal) {
     signal: signal
   })
 }
+
+export function getWeatherByRealTime(fanid) {
+  return request({
+    url: '/weather/realtime',
+    method: 'get',
+    params: { fanid }
+  })
+}
+
+export function getWeatherByPeriod(bgtime, edtime, fanid) {
+  return request({
+    url: '/weather/period',
+    method: 'get',
+    params: { bgtime, edtime, fanid }
+  })
+}
