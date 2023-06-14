@@ -1,51 +1,98 @@
+/* eslint-disable */
 <template>
   <div class="login-container">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
-      <div class="title-container">
-        <img src="https://cdn.staticaly.com/gh/sail-Yang/myImage@main/img/logo_transparent.517gc42ii8k0.webp" class="title-logo" height="150" width="200">
-      </div>
-      <el-form-item prop="username">
-        <span class="svg-container">
-          <svg-icon icon-class="user" />
-        </span>
-        <el-input
-          ref="username"
-          v-model="loginForm.username"
-          placeholder="用户名"
-          name="username"
-          type="text"
-          tabindex="1"
-          auto-complete="on"
-        />
-      </el-form-item>
-      <el-form-item prop="password">
-        <span class="svg-container">
-          <svg-icon icon-class="password" />
-        </span>
-        <el-input
-          :key="passwordType"
-          ref="password"
-          v-model="loginForm.password"
-          :type="passwordType"
-          placeholder="密码"
-          name="password"
-          tabindex="2"
-          auto-complete="on"
-          @keyup.enter.native="handleLogin"
-        />
-        <span class="show-pwd" @click="showPwd">
-          <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
-        </span>
-      </el-form-item>
-      <el-button :loading="loading" type="primary" style="width:45%;margin-bottom:10px;" @click.native.prevent="handleLogin">登录</el-button>
-      <el-button :loading="loading" type="primary" style="float:right;width:45%;margin-bottom:10px;" @click.native.prevent="handleSignUp">注册</el-button>
-    </el-form>
+    <div class="form-container">
+      <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="账号密码登录" name="first">
+          <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
+            <el-form-item prop="username">
+              <span class="svg-container">
+                <svg-icon icon-class="user" />
+              </span>
+              <el-input
+                ref="username"
+                v-model="loginForm.username"
+                placeholder="用户名/邮箱"
+                name="username"
+                type="text"
+                tabindex="1"
+                auto-complete="on"
+              />
+            </el-form-item>
+            <el-form-item prop="password">
+              <span class="svg-container">
+                <svg-icon icon-class="password" />
+              </span>
+              <el-input
+                :key="passwordType"
+                ref="password"
+                v-model="loginForm.password"
+                :type="passwordType"
+                placeholder="密码"
+                name="password"
+                tabindex="2"
+                auto-complete="on"
+                @keyup.enter.native="handleLogin"
+              />
+              <span class="show-pwd" @click="showPwd">
+                <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+              </span>
+            </el-form-item>
+          </el-form>
+          <el-button :loading="loading" type="primary" style="width:45%;margin-bottom:10px;" @click.native.prevent="handleLogin">登录</el-button>
+          <el-button :loading="loading" type="primary" style="float:right;width:45%;margin-bottom:10px;" @click.native.prevent="handleSignUp">注册</el-button>
+        </el-tab-pane>
+        <el-tab-pane label="邮箱验证码登录" name="second">
+          <el-form ref="emailLoginForm" :model="emailLoginForm" class="login-form" auto-complete="on" label-position="left">
+            <el-form-item prop="email" :rules="emailRules">
+              <span class="svg-container">
+                <svg-icon icon-class="email" />
+              </span>
+              <el-input
+                ref="email"
+                v-model="emailLoginForm.email"
+                placeholder="邮箱"
+                name="email"
+                type="text"
+                tabindex="1"
+                auto-complete="on"
+              />
+            </el-form-item>
+            <el-row>
+              <el-col :span="12">
+                <el-form-item prop="emailCode" :inline="true" :rules="emailRules">
+                  <span class="svg-container">
+                    <svg-icon icon-class="password" />
+                  </span>
+                  <el-input
+                    ref="emailCode"
+                    v-model="emailLoginForm.emailCode"
+                    placeholder="邮箱验证码"
+                    name="emailCode"
+                    tabindex="2"
+                    auto-complete="on"
+                    @keyup.enter.native="handleLogin"
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="5">&nbsp;</el-col>
+              <el-col :span="6">
+                <el-button type="primary" :disabled="codeDisabled" style="height: 54px;" @click.native.prevent="getEmailCode">{{ buttonText }}</el-button>
+              </el-col>
+              <el-col :span="1">&nbsp;</el-col>
+            </el-row>
+          </el-form>
+          <el-button :loading="loading" type="primary" :rules="emailRules" style="width:45%;margin-bottom:10px;" @click.native.prevent="handleEmailLogin">登录</el-button>
+          <el-button :loading="loading" type="primary" style="float:right;width:45%;margin-bottom:10px;" @click.native.prevent="handleSignUp">注册</el-button>
+        </el-tab-pane>
+      </el-tabs>
+    </div>
   </div>
 </template>
 
 <script>
 import { validUsername } from '@/utils/validate'
-
+import { getCode } from '@/api/user'
 export default {
   name: 'Login',
   data() {
@@ -63,18 +110,47 @@ export default {
         callback()
       }
     }
+    const validateEmailCode = (rule, value, callback) => {
+      const regEmail = /^\d{6}$/
+      if (!regEmail.test(value)) {
+        callback(new Error('请输入正确的6位验证码'))
+      } else {
+        callback()
+      }
+    }
+    const validateEmail = (rule, value, callback) => {
+      const regEmail = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/
+      if (!regEmail.test(value)) {
+        callback(new Error('请输入正确的邮箱格式'))
+      } else {
+        callback()
+      }
+    }
     return {
       loginForm: {
         username: '',
         password: ''
       },
+      emailLoginForm: {
+        email: '',
+        emailCode: ''
+      },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
+      emailRules: {
+        email: [{ required: true, trigger: 'blur', validator: validateEmail }],
+        emailCode: [{ required: true, trigger: 'blur', validator: validateEmailCode }]
+      },
+      activeName: 'first',
       loading: false,
       passwordType: 'password',
-      redirect: undefined
+      redirect: undefined,
+      buttonText: '获取邮箱验证码',
+      codeDisabled: false,
+      duration: 60,
+      timer: null
     }
   },
   watch: {
@@ -120,6 +196,52 @@ export default {
     handleSignUp() {
       this.$router.push('/signup')
       this.loading = false
+    },
+    handleEmailLogin() {
+      this.$refs.emailLoginForm.validate(valid => {
+        if (valid) {
+          // Vuex的状态管理模式方法调用
+          this.loading = true
+          this.$store.dispatch('user/emailLogin', this.emailLoginForm).then(() => {
+            this.$message({
+              type: 'success',
+              message: '登录成功!',
+              duration: 2 * 1000
+            })
+            this.$router.push({ path: this.redirect || '/index' })
+            this.loading = false
+          }).catch(() => {
+            this.loading = false
+          })
+        } else {
+          return false
+        }
+      })
+    },
+    getEmailCode() {
+      const regEmail = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/
+      if (regEmail.test(this.emailLoginForm.email)) {
+        this.timer = setInterval(() => {
+          this.codeDisabled = true
+          const tmp = this.duration--
+          this.buttonText = `${tmp}秒后重新获取`
+          if (tmp <= 0) {
+            clearInterval(this.timer)
+            this.duration = 60
+            this.buttonText = '重新获取验证码'
+            this.codeDisabled = false
+          }
+        }, 1000)
+        getCode(this.emailLoginForm.email).then(
+          response => {
+            this.$message({
+              message: '发送验证码失败',
+              type: 'success'
+            })
+          }
+        ).catch(() => {
+        })
+      }
     }
   }
 }
@@ -141,7 +263,7 @@ $cursor: #fff;
 
 /* reset element-ui css */
 .login-container {
-  background:url("https://cdn.staticaly.com/gh/sail-Yang/myImage@main/img/loginBackground.1ri5jdacoh40.webp") no-repeat;
+  // background:url("https://cdn.staticaly.com/gh/sail-Yang/myImage@main/img/loginBackground.1ri5jdacoh40.webp") no-repeat;
   background-position: center;
   height: 100%;
   width: 100%;
@@ -189,7 +311,7 @@ $light_gray:#eee;
   width: 100%;
   overflow: hidden;
 
-  .login-form {
+  .form-container {
     border-radius: 15px;
     background-clip: padding-box;
     margin: 200px auto;
@@ -208,18 +330,6 @@ $light_gray:#eee;
     display: inline-block;
   }
 
-  .title-container {
-    position: relative;
-    text-align: center;
-    .title {
-      font-size: 26px;
-      color: #505458;
-      margin: 0px auto 40px auto;
-      text-align: center;
-      font-weight: bold;
-    }
-  }
-
   .show-pwd {
     position: absolute;
     right: 10px;
@@ -229,5 +339,8 @@ $light_gray:#eee;
     cursor: pointer;
     user-select: none;
   }
+}
+.el-col {
+  min-height: 1px
 }
 </style>

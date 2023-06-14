@@ -1,4 +1,4 @@
-import { login, logout, getInfo, signup } from '@/api/user'
+import { login, logout, getInfo, signup, emailLogin } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
@@ -42,7 +42,20 @@ const actions = {
       })
     })
   },
-
+  // user email login,封装axios进行异步请求,获取token后存入vuex供全局使用
+  emailLogin({ commit }, userInfo) {
+    const { email, emailCode } = userInfo
+    return new Promise((resolve, reject) => {
+      emailLogin(email.trim(), emailCode).then(response => {
+        const { data } = response
+        commit('SET_TOKEN', data.token)
+        setToken(data.token)
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {

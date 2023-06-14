@@ -37,3 +37,19 @@ export function getUserNames() {
     method: 'get'
   })
 }
+
+export function emailLogin(email, code) {
+  return request({
+    url: '/user/emaillogin',
+    method: 'post',
+    params: { email, code }
+  })
+}
+
+export function getCode(email) {
+  return request({
+    url: '/email/getcode',
+    method: 'post',
+    params: { email }
+  })
+}
