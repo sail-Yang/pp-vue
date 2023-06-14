@@ -1,7 +1,7 @@
 
 <template>
   <el-container>
-    <el-header>
+    <!-- <el-header>
       <div class="sidebar-logo-container">
         <transition name="sidebarLogoFade">
           <router-link v-if="true" key="true" class="sidebar-logo-link" to="/ogin">
@@ -10,25 +10,16 @@
           </router-link>
         </transition>
       </div>
-    </el-header>
+    </el-header> -->
     <el-main>
       <div class="signup-container">
         <el-form
           ref="signUpForm"
           :model="signUpForm"
-          :rules="signupRoles"
           class="login-form"
           label-position="left"
         >
-          <div class="title-container">
-            <img
-              src="https://cdn.staticaly.com/gh/sail-Yang/myImage@main/img/logo_transparent.517gc42ii8k0.webp"
-              class="title-logo"
-              height="150"
-              width="200"
-            >
-          </div>
-          <el-form-item prop="username">
+          <el-form-item prop="username" :rules="signupRoles">
             <span class="svg-container">
               <svg-icon icon-class="user" />
             </span>
@@ -41,7 +32,44 @@
               tabindex="1"
             />
           </el-form-item>
-          <el-form-item prop="password">
+          <el-form-item prop="email" :rules="signupRoles">
+            <span class="svg-container">
+              <svg-icon icon-class="email" />
+            </span>
+            <el-input
+              ref="email"
+              v-model="signUpForm.email"
+              placeholder="邮箱"
+              name="email"
+              type="text"
+              tabindex="1"
+              auto-complete="on"
+            />
+          </el-form-item>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item prop="emailCode" :inline="true" :rules="signupRoles">
+                <span class="svg-container">
+                  <svg-icon icon-class="password" />
+                </span>
+                <el-input
+                  ref="emailCode"
+                  v-model="signUpForm.emailCode"
+                  placeholder="邮箱验证码"
+                  name="emailCode"
+                  tabindex="2"
+                  auto-complete="on"
+                  @keyup.enter.native="handleLogin"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="5">&nbsp;</el-col>
+            <el-col :span="6">
+              <el-button type="primary" :disabled="codeDisabled" style="height: 54px;" @click.native.prevent="getEmailCode">{{ buttonText }}</el-button>
+            </el-col>
+            <el-col :span="1">&nbsp;</el-col>
+          </el-row>
+          <el-form-item prop="password" :rules="signupRoles">
             <span class="svg-container">
               <svg-icon icon-class="password" />
             </span>
@@ -62,14 +90,26 @@
               <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
             </span>
           </el-form-item>
-          <el-button
-            :loading="loading"
-            :disabled="buttonDisable"
-            type="primary"
-            class="el-button"
-            style="width:45%;margin-bottom:10px;"
-            @click.native.prevent="handleSignUp"
-          >立即注册</el-button>
+          <el-row>
+            <el-col :span="12">
+              <el-button
+                :loading="loading"
+                :disabled="buttonDisable"
+                type="primary"
+                class="el-button"
+                style="width:85%;margin-bottom:10px;"
+                @click.native.prevent="handleSignUp"
+              >立即注册</el-button>
+            </el-col>
+            <el-col :span="12">
+              <el-button
+                type="danger"
+                class="el-button"
+                style="width:85%;margin-bottom:10px;"
+                @click.native.prevent="goOff"
+              >返回</el-button>
+            </el-col>
+          </el-row>
         </el-form>
       </div>
     </el-main>
@@ -77,6 +117,7 @@
 </template>
 
 <script>
+import { getSingupCode } from '@/api/user'
 export default {
   data() {
     const validatePassword = (rule, value, callback) => {
@@ -88,20 +129,44 @@ export default {
         callback()
       }
     }
+    const validateEmailCode = (rule, value, callback) => {
+      const regEmail = /^\d{6}$/
+      if (!regEmail.test(value)) {
+        callback(new Error('请输入正确的6位验证码'))
+      } else {
+        callback()
+      }
+    }
+    const validateEmail = (rule, value, callback) => {
+      const regEmail = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/
+      if (!regEmail.test(value)) {
+        callback(new Error('请输入正确的邮箱格式'))
+      } else {
+        callback()
+      }
+    }
     return {
       title: '功率先知',
       logo: 'https://cdn.staticaly.com/gh/sail-Yang/myImage@main/img/logo_transparent.444truy0g380.png',
       signUpForm: {
         username: '',
-        password: ''
+        password: '',
+        email: '',
+        emailCode: ''
       },
       signupRoles: {
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        password: [{ required: true, trigger: 'blur', validator: validatePassword }],
+        email: [{ required: true, trigger: 'blur', validator: validateEmail }],
+        emailCode: [{ required: true, trigger: 'blur', validator: validateEmailCode }]
       },
       loading: false,
       buttonDisable: false,
       passwordType: 'password',
-      redirect: undefined
+      redirect: undefined,
+      buttonText: '获取邮箱验证码',
+      codeDisabled: false,
+      duration: 60,
+      timer: null
     }
   },
   watch: {
@@ -136,6 +201,36 @@ export default {
       }).catch(() => {
         this.loading = false
       })
+    },
+    getEmailCode() {
+      const regEmail = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/
+      if (regEmail.test(this.signUpForm.email)) {
+        this.timer = setInterval(() => {
+          this.codeDisabled = true
+          const tmp = this.duration--
+          this.buttonText = `${tmp}秒后重新获取`
+          if (tmp <= 0) {
+            clearInterval(this.timer)
+            this.duration = 60
+            this.buttonText = '重新获取验证码'
+            this.codeDisabled = false
+          }
+        }, 1000)
+        getSingupCode(this.signUpForm.email, this.signUpForm.username).then(
+          response => {
+            this.$message({
+              message: '发送验证码成功',
+              type: 'success'
+            })
+          }
+        ).catch(() => {
+        })
+      } else {
+        this.$message.error('发送验证码失败')
+      }
+    },
+    goOff() {
+      this.$router.back()
     }
   }
 }
@@ -285,5 +380,9 @@ $light_gray:#eee;
     cursor: pointer;
     user-select: none;
   }
+}
+
+.el-col {
+  min-height: 1px
 }
 </style>

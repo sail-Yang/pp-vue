@@ -92,7 +92,7 @@
 
 <script>
 import { validUsername } from '@/utils/validate'
-import { getCode } from '@/api/user'
+import { getLoginCode } from '@/api/user'
 export default {
   name: 'Login',
   data() {
@@ -232,7 +232,7 @@ export default {
             this.codeDisabled = false
           }
         }, 1000)
-        getCode(this.emailLoginForm.email).then(
+        getLoginCode(this.emailLoginForm.email).then(
           response => {
             this.$message({
               message: '发送验证码失败',
@@ -307,9 +307,6 @@ $dark_gray:#889aa4;
 $light_gray:#eee;
 
 .login-container {
-  min-height: 100%;
-  width: 100%;
-  overflow: hidden;
 
   .form-container {
     border-radius: 15px;

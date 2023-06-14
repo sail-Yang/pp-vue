@@ -46,10 +46,18 @@ export function emailLogin(email, code) {
   })
 }
 
-export function getCode(email) {
+export function getLoginCode(email) {
   return request({
-    url: '/email/getcode',
+    url: '/email/getcode/login',
     method: 'post',
     params: { email }
+  })
+}
+
+export function getSingupCode(email, username) {
+  return request({
+    url: '/email/getcode/signup',
+    method: 'post',
+    params: { email, username }
   })
 }

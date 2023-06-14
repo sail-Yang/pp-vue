@@ -93,8 +93,8 @@ const actions = {
   // user sign up
   signup({ commit }, userInfo) {
     return new Promise((resolve, reject) => {
-      const { username, password } = userInfo
-      signup({ username: username.trim(), password: password }).then(() => {
+      const { username, password, email, emailCode } = userInfo
+      signup({ username: username.trim(), password: password, email: email, code: emailCode }).then(() => {
         removeToken()
         resetRouter()
         commit('RESET_STATE')
