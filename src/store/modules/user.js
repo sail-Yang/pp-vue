@@ -1,12 +1,15 @@
-import { login, logout, getInfo, signup, emailLogin } from '@/api/user'
+import { login, logout, getInfo, signup, emailLogin, updateAccount, updateModel } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
 const getDefaultState = () => {
   return {
     token: getToken(),
-    name: '',
-    avatar: 'https://cdn.staticaly.com/gh/sail-Yang/myImage@main/img/logo.1yceuco8s0rk.png'
+    username: '',
+    avatar: 'https://cdn.staticaly.com/gh/sail-Yang/myImage@main/img/logo.1yceuco8s0rk.png',
+    model: 'multi',
+    password: '',
+    email: ''
   }
 }
 
@@ -19,11 +22,20 @@ const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token
   },
-  SET_NAME: (state, name) => {
-    state.name = name
+  SET_USERNAME: (state, username) => {
+    state.username = username
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
+  },
+  SET_MODEL: (state, model) => {
+    state.model = model
+  },
+  SET_PASSWORD: (state, password) => {
+    state.password = password
+  },
+  SET_EMAIL: (state, email) => {
+    state.email = email
   }
 }
 
@@ -35,6 +47,10 @@ const actions = {
       login({ username: username.trim(), password: password }).then(response => {
         const { data } = response
         commit('SET_TOKEN', data.token)
+        commit('SET_MODEL', data.model)
+        commit('SET_PASSWORD', data.password)
+        commit('SET_EMAIL', data.email)
+        commit('SET_USERNAME', data.username)
         setToken(data.token)
         resolve()
       }).catch(error => {
@@ -49,6 +65,10 @@ const actions = {
       emailLogin(email.trim(), emailCode).then(response => {
         const { data } = response
         commit('SET_TOKEN', data.token)
+        commit('SET_MODEL', data.model)
+        commit('SET_PASSWORD', data.password)
+        commit('SET_EMAIL', data.email)
+        commit('SET_USERNAME', data.username)
         setToken(data.token)
         resolve()
       }).catch(error => {
@@ -64,10 +84,8 @@ const actions = {
         if (!data) {
           return reject('Verification failed, please Login again.')
         }
-
         const { name, avatar } = data
-
-        commit('SET_NAME', name)
+        commit('SET_USERNAME', name)
         commit('SET_AVATAR', avatar)
         resolve(data)
       }).catch(error => {
@@ -111,6 +129,35 @@ const actions = {
       removeToken() // must remove  token  first
       commit('RESET_STATE')
       resolve()
+    })
+  },
+
+  updateAccount({ commit }, userInfo) {
+    const { username, password, email, emailCode } = userInfo
+    return new Promise((resolve, reject) => {
+      updateAccount({ username: username.trim(), password: password, email: email.trim(), code: emailCode }).then(response => {
+        const { data } = response
+        commit('SET_PASSWORD', password)
+        commit('SET_EMAIL', email)
+        commit('SET_USERNAME', username)
+        commit('SET_TOKEN', data.token)
+        setToken(data.token)
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  updateModel({ commit }, modelInfo) {
+    const { username, model } = modelInfo
+    return new Promise((resolve, reject) => {
+      updateModel(username, model).then(response => {
+        commit('SET_MODEL', model)
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
     })
   }
 }

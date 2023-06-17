@@ -47,6 +47,7 @@ export default {
     },
     async logout() {
       await this.$store.dispatch('user/logout')
+      sessionStorage.clear()
       this.$message({
         type: 'success',
         message: '登出成功!',

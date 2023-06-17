@@ -51,8 +51,8 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">查询功率</el-button>
-          <el-button type="danger" @click="onReset">查看实时</el-button>
+          <el-button type="primary" @click="onFind">查询功率</el-button>
+          <el-button type="danger" @click="onReal">查看实时</el-button>
           <el-button type="info" @click="dialogVisible = true">导出数据</el-button>
         </el-form-item>
       </el-form>
@@ -166,7 +166,7 @@ export default {
     }
   },
   methods: {
-    onSubmit() {
+    onFind() {
       sessionStorage.setItem('realFan', this.form.fan)
       this.loading = true
       sessionStorage.setItem('realLoading', this.loading)
@@ -188,11 +188,11 @@ export default {
         sessionStorage.setItem('realLoading', this.loading)
       })
     },
-    onReset() {
+    onReal() {
       this.loading = true
       sessionStorage.setItem('realLoading', this.loading)
       sessionStorage.setItem('realFan', this.form.fan)
-      predictByRealTime(this.form.fan).then(
+      predictByRealTime(this.form.fan, this.$store.getters.model).then(
         response => {
           sessionStorage.setItem('realXdata', JSON.stringify(response.data))
           this.xdata = JSON.parse(sessionStorage.getItem('realXdata'))

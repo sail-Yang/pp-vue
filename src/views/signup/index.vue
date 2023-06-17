@@ -117,7 +117,7 @@
 </template>
 
 <script>
-import { getSingupCode } from '@/api/user'
+import { getSignupCode } from '@/api/user'
 export default {
   data() {
     const validatePassword = (rule, value, callback) => {
@@ -216,7 +216,7 @@ export default {
             this.codeDisabled = false
           }
         }, 1000)
-        getSingupCode(this.signUpForm.email, this.signUpForm.username).then(
+        getSignupCode(this.signUpForm.email, this.signUpForm.username).then(
           response => {
             this.$message({
               message: '发送验证码成功',

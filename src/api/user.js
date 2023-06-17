@@ -54,10 +54,26 @@ export function getLoginCode(email) {
   })
 }
 
-export function getSingupCode(email, username) {
+export function getSignupCode(email, username) {
   return request({
     url: '/email/getcode/signup',
     method: 'post',
     params: { email, username }
+  })
+}
+
+export function updateAccount(data) {
+  return request({
+    url: '/user/update/account',
+    method: 'post',
+    data
+  })
+}
+
+export function updateModel(username, model) {
+  return request({
+    url: '/user/update/model',
+    method: 'post',
+    params: { username, model }
   })
 }

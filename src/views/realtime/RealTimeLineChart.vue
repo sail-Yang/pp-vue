@@ -49,7 +49,7 @@ export default {
     if (sessionStorage.getItem('realXdata') !== null) {
       this.xdata = JSON.parse(sessionStorage.getItem('realXdata'))
     } else {
-      predictByRealTime(1).then(
+      predictByRealTime(1, this.$store.getters.model).then(
         response => {
           sessionStorage.setItem('realXdata', JSON.stringify(response.data))
           this.xdata = JSON.parse(sessionStorage.getItem('realXdata'))

@@ -8,19 +8,19 @@ export function getFanDataByPeriod(bgtime, edtime, fanid) {
   })
 }
 
-export function predictByRealTime(fanid) {
+export function predictByRealTime(fanid, model) {
   return request({
     url: '/predict/realtime',
     method: 'get',
-    params: { fanid }
+    params: { fanid, model }
   })
 }
 
-export function predictByPeriod(bgtime, edtime, hours, fanid, signal) {
+export function predictByPeriod(bgtime, edtime, hours, fanid, signal, model) {
   return request({
     url: '/predict/period',
     method: 'get',
-    params: { bgtime, edtime, hours, fanid },
+    params: { bgtime, edtime, hours, fanid, model },
     signal: signal
   })
 }

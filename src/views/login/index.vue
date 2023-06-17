@@ -235,11 +235,16 @@ export default {
         getLoginCode(this.emailLoginForm.email).then(
           response => {
             this.$message({
-              message: '发送验证码失败',
+              message: '发送验证码成功',
               type: 'success'
             })
           }
         ).catch(() => {
+        })
+      } else {
+        this.$message({
+          message: '请输入正确的邮箱格式',
+          type: 'warning'
         })
       }
     }
