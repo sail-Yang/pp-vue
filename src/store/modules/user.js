@@ -9,7 +9,8 @@ const getDefaultState = () => {
     avatar: 'https://cdn.staticaly.com/gh/sail-Yang/myImage@main/img/logo.1yceuco8s0rk.png',
     model: 'multi',
     password: '',
-    email: ''
+    email: '',
+    visitNums: 0
   }
 }
 
@@ -36,6 +37,9 @@ const mutations = {
   },
   SET_EMAIL: (state, email) => {
     state.email = email
+  },
+  SET_VISITNUMS: (state, visitNums) => {
+    state.visitNums = visitNums
   }
 }
 
@@ -51,6 +55,7 @@ const actions = {
         commit('SET_PASSWORD', data.password)
         commit('SET_EMAIL', data.email)
         commit('SET_USERNAME', data.username)
+        commit('SET_VISITNUMS', data.visitNums)
         setToken(data.token)
         resolve()
       }).catch(error => {

@@ -76,8 +76,8 @@
         <el-form ref="modelForm" :model="modelForm">
           <el-form-item label="模型选择">
             <el-radio-group ref="model" v-model="modelForm.model">
-              <el-radio label="multi">多模型</el-radio>
-              <el-radio label="single">单模型(lstm)</el-radio>
+              <el-radio label="multi">多模型(CNN-LSTM)</el-radio>
+              <el-radio label="single">单模型(LSTM)</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item>

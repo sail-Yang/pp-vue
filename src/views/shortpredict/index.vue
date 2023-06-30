@@ -260,7 +260,7 @@ export default {
         .catch(_ => {})
     },
     handleDownload() {
-      this.xdata = JSON.parse(sessionStorage.getItem('realXdata'))
+      this.xdata = JSON.parse(sessionStorage.getItem('periodXdata'))
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
         const tHeader = ['datatime', 'yd15', 'power', 'prePower']

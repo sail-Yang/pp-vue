@@ -8,11 +8,11 @@ export function getFanDataByPeriod(bgtime, edtime, fanid) {
   })
 }
 
-export function predictByRealTime(fanid, model) {
+export function predictByRealTime(username, fanid, model) {
   return request({
     url: '/predict/realtime',
     method: 'get',
-    params: { fanid, model }
+    params: { username, fanid, model }
   })
 }
 
@@ -38,5 +38,19 @@ export function getWeatherByPeriod(bgtime, edtime, fanid) {
     url: '/weather/period',
     method: 'get',
     params: { bgtime, edtime, fanid }
+  })
+}
+
+export function fetchFans() {
+  return request({
+    url: '/fandata/fans',
+    method: 'get'
+  })
+}
+
+export function fetchDatas() {
+  return request({
+    url: '/fandata/datas',
+    method: 'get'
   })
 }

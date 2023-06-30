@@ -98,7 +98,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" icon="el-icon-document" @click="handleDownload">Export Excel</el-button>
+        <el-button v-loading="downloadLoading" type="primary" icon="el-icon-document" @click="handleDownload">导出</el-button>
       </span>
     </el-dialog>
   </div>
@@ -192,7 +192,7 @@ export default {
       this.loading = true
       sessionStorage.setItem('realLoading', this.loading)
       sessionStorage.setItem('realFan', this.form.fan)
-      predictByRealTime(this.form.fan, this.$store.getters.model).then(
+      predictByRealTime(this.$store.getters.username, this.form.fan, this.$store.getters.model).then(
         response => {
           sessionStorage.setItem('realXdata', JSON.stringify(response.data))
           this.xdata = JSON.parse(sessionStorage.getItem('realXdata'))

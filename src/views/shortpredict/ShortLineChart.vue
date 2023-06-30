@@ -61,7 +61,7 @@ export default {
       if (sessionStorage.getItem('periodXdata') !== null) {
         this.xdata = JSON.parse(sessionStorage.getItem('periodXdata'))
       } else {
-        predictByRealTime(this.fanid, this.$store.getters.model).then(
+        predictByRealTime(this.$store.getters.username, this.fanid, this.$store.getters.model).then(
           response => {
             sessionStorage.setItem('periodXdata', JSON.stringify(response.data))
             this.xdata = response.data

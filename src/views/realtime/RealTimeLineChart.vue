@@ -49,7 +49,7 @@ export default {
     if (sessionStorage.getItem('realXdata') !== null) {
       this.xdata = JSON.parse(sessionStorage.getItem('realXdata'))
     } else {
-      predictByRealTime(1, this.$store.getters.model).then(
+      predictByRealTime(this.$store.getters.username, 1, this.$store.getters.model).then(
         response => {
           sessionStorage.setItem('realXdata', JSON.stringify(response.data))
           this.xdata = JSON.parse(sessionStorage.getItem('realXdata'))
@@ -163,10 +163,10 @@ export default {
             normal: {
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
                 offset: 0,
-                color: 'rgba(0, 136, 212, 0.3)'
+                color: 'rgba(250, 184, 62, 0.5)'
               }, {
                 offset: 0.8,
-                color: 'rgba(0, 136, 212, 0)'
+                color: 'rgba(250, 184, 62, 0)'
               }], false),
               shadowColor: 'rgba(0, 0, 0, 0.1)',
               shadowBlur: 10
@@ -174,8 +174,8 @@ export default {
           },
           itemStyle: {
             normal: {
-              color: 'rgb(0,136,212)',
-              borderColor: 'rgba(0,136,212,0.2)',
+              color: 'rgb(250, 184, 62)',
+              borderColor: 'rgba(250, 184, 62,0.2)',
               borderWidth: 12
 
             }
@@ -197,10 +197,10 @@ export default {
             normal: {
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
                 offset: 0,
-                color: 'rgba(219, 50, 51, 0.3)'
+                color: 'rgba(184, 62, 250, 0.5)'
               }, {
                 offset: 0.8,
-                color: 'rgba(219, 50, 51, 0)'
+                color: 'rgba(184, 62, 250, 0)'
               }], false),
               shadowColor: 'rgba(0, 0, 0, 0.1)',
               shadowBlur: 10
@@ -208,8 +208,8 @@ export default {
           },
           itemStyle: {
             normal: {
-              color: 'rgb(219,50,51)',
-              borderColor: 'rgba(219,50,51,0.2)',
+              color: 'rgb(184, 62, 250)',
+              borderColor: 'rgba(184, 62, 250,0.2)',
               borderWidth: 12
             }
           },
@@ -230,10 +230,10 @@ export default {
             normal: {
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
                 offset: 0,
-                color: 'rgba(137, 189, 27, 0.3)'
+                color: 'rgba(227, 51, 76, 0.5)'
               }, {
                 offset: 0.8,
-                color: 'rgba(137, 189, 27, 0)'
+                color: 'rgba(227, 51, 76, 0)'
               }], false),
               shadowColor: 'rgba(0, 0, 0, 0.1)',
               shadowBlur: 10
@@ -241,8 +241,8 @@ export default {
           },
           itemStyle: {
             normal: {
-              color: 'rgb(137,189,27)',
-              borderColor: 'rgba(137,189,2,0.27)',
+              color: 'rgb(227, 51, 76)',
+              borderColor: 'rgba(227, 51, 76,0.27)',
               borderWidth: 12
 
             }

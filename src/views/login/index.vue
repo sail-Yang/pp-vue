@@ -268,7 +268,7 @@ $cursor: #fff;
 
 /* reset element-ui css */
 .login-container {
-  // background:url("https://cdn.staticaly.com/gh/sail-Yang/myImage@main/img/loginBackground.1ri5jdacoh40.webp") no-repeat;
+  background:url("https://cdn.staticaly.com/gh/sail-Yang/myImage@main/img/loginBackground .12r1yszcw4gw.png") no-repeat;
   background-position: center;
   height: 100%;
   width: 100%;
@@ -307,8 +307,8 @@ $cursor: #fff;
 </style>
 
 <style lang="scss" scoped>
-$bg:#2d3a4b;
-$dark_gray:#889aa4;
+$bg:#a9b3be;
+$dark_gray:#8aa3b1;
 $light_gray:#eee;
 
 .login-container {
@@ -319,7 +319,7 @@ $light_gray:#eee;
     margin: 200px auto;
     width: 600px;
     padding: 35px 35px 35px 35px;
-    background: #fff;
+    background: #ffffff;
     border: 1px solid #eaeaea;
     box-shadow: 0 0 25px #cac6c6;
   }

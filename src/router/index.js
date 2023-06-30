@@ -55,16 +55,28 @@ export const constantRoutes = [
     redirect: '/index',
     children: [{
       path: 'index',
+      name: 'Dashboard',
+      component: () => import('@/views/dashboard/index'),
+      meta: { title: '首页', icon: 'dashboard', noCache: true }
+    }]
+  },
+
+  {
+    path: '/realtime',
+    component: Layout,
+    redirect: 'realtime/index',
+    children: [{
+      path: 'index',
       name: 'Realtime',
       component: () => import('@/views/realtime/index'),
-      meta: { title: '实时功率预测', icon: 'dashboard', noCache: true }
+      meta: { title: '实时功率预测', icon: 'table' }
     }]
   },
 
   {
     path: '/short',
     component: Layout,
-    redirect: '/index',
+    redirect: '/short/index',
     children: [{
       path: 'index',
       name: 'Short',
@@ -83,6 +95,20 @@ export const constantRoutes = [
         name: 'Weather',
         component: () => import('@/views/weather/index'),
         meta: { title: '气象监控', icon: 'international' }
+      }
+    ]
+  },
+
+  {
+    path: '/log',
+    component: Layout,
+    redirect: '/log/index',
+    children: [
+      {
+        path: 'index',
+        name: 'Log',
+        component: () => import('@/views/log/index'),
+        meta: { title: '日志', icon: 'bug' }
       }
     ]
   },
