@@ -225,7 +225,7 @@ export default {
       sessionStorage.setItem('periodLoading', this.loading)
       var beginTime = formDateFormat(this.form.startDate, this.form.startTime)
       var endTime = formDateFormat(this.form.endDate, this.form.endTime)
-      predictByPeriod(beginTime, endTime, this.form.hours, this.form.fan, this.abortController.signal, this.$store.getters.model).then(
+      predictByPeriod(this.$store.getters.username, beginTime, endTime, this.form.hours, this.form.fan, this.abortController.signal, this.$store.getters.model).then(
         response => {
           sessionStorage.setItem('periodXdata', JSON.stringify(response.data))
           this.xdata = JSON.parse(sessionStorage.getItem('periodXdata'))

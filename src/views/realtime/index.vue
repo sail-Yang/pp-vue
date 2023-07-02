@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-row>
-      <el-form v-loading="loading" element-loading-text="拼命加载中" :model="form" label-width="80px" :inline="true">
+      <el-form v-loading="loading" element-loading-text="拼命加载中" :model="form" label-width="60px" :inline="true">
         <el-form-item label="时间段">
           <el-date-picker
             v-model="form.startDate"
@@ -37,18 +37,23 @@
           />
         </el-form-item>
         <el-form-item label="风机">
-          <el-select v-model="form.fan" placeholder="请选择风机的编号">
-            <el-option label="1号风机" value="1" />
-            <el-option label="2号风机" value="2" />
-            <el-option label="3号风机" value="3" />
-            <el-option label="4号风机" value="4" />
-            <el-option label="5号风机" value="5" />
-            <el-option label="6号风机" value="6" />
-            <el-option label="7号风机" value="7" />
-            <el-option label="8号风机" value="8" />
-            <el-option label="9号风机" value="9" />
-            <el-option label="10号风机" value="10" />
-          </el-select>
+          <!-- <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 6}" :lg="{span: 6}" :xl="{span: 12}">
+            &nbsp;&nbsp;风机
+          </el-col> -->
+          <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 18}" :lg="{span: 18}" :xl="{span: 12}">
+            <el-select v-model="form.fan" placeholder="请选择风机的编号">
+              <el-option label="1号风机" value="1" />
+              <el-option label="2号风机" value="2" />
+              <el-option label="3号风机" value="3" />
+              <el-option label="4号风机" value="4" />
+              <el-option label="5号风机" value="5" />
+              <el-option label="6号风机" value="6" />
+              <el-option label="7号风机" value="7" />
+              <el-option label="8号风机" value="8" />
+              <el-option label="9号风机" value="9" />
+              <el-option label="10号风机" value="10" />
+            </el-select>
+          </el-col>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onFind">查询功率</el-button>
@@ -256,5 +261,8 @@ export default {
 
 .line {
   text-align: center;
+}
+.el-col {
+  min-height: 1px
 }
 </style>

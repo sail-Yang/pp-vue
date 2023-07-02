@@ -16,11 +16,11 @@ export function predictByRealTime(username, fanid, model) {
   })
 }
 
-export function predictByPeriod(bgtime, edtime, hours, fanid, signal, model) {
+export function predictByPeriod(username, bgtime, edtime, hours, fanid, signal, model) {
   return request({
     url: '/predict/period',
     method: 'get',
-    params: { bgtime, edtime, hours, fanid, model },
+    params: { username, bgtime, edtime, hours, fanid, model },
     signal: signal
   })
 }
@@ -43,7 +43,7 @@ export function getWeatherByPeriod(bgtime, edtime, fanid) {
 
 export function fetchFans() {
   return request({
-    url: '/fandata/fans',
+    url: '/fandata/fannums',
     method: 'get'
   })
 }
@@ -52,5 +52,13 @@ export function fetchDatas() {
   return request({
     url: '/fandata/datas',
     method: 'get'
+  })
+}
+
+export function fetchFanList(username) {
+  return request({
+    url: '/fandata/fans',
+    method: 'get',
+    params: { username }
   })
 }

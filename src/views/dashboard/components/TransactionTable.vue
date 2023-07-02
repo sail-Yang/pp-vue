@@ -1,40 +1,35 @@
 <template>
-  <el-table :data="list" style="width: 100%;padding-top: 15px;">
-    <el-table-column label="Order_No" min-width="200">
+  <el-table :data="list" fit style="width: 100%;height: 100%;padding-top: 15px;">
+    <el-table-column label="风机编号">
       <template slot-scope="scope">
-        {{ scope.row.order_no | orderNoFilter }}
+        {{ scope.row.id }}
       </template>
     </el-table-column>
-    <el-table-column label="Price" width="195" align="center">
+    <el-table-column label="总预测次数" align="center">
       <template slot-scope="scope">
-        ¥{{ scope.row.price | toThousandFilter }}
-      </template>
-    </el-table-column>
-    <el-table-column label="Status" width="100" align="center">
-      <template slot-scope="{row}">
-        <el-tag :type="row.status | statusFilter">
-          {{ row.status }}
+        <el-tag type="success">
+          {{ scope.row.nums }}
         </el-tag>
+      </template>
+    </el-table-column>
+    <el-table-column label="近日预警" align="center">
+      <template slot-scope="scope">
+        <el-button v-if="scope.row.outliers > 0" type="warning" size="mini">
+          有异常值
+        </el-button>
+        <el-button v-else type="info" size="mini" disabled="true">
+          无异常值
+        </el-button>
       </template>
     </el-table-column>
   </el-table>
 </template>
 
 <script>
-import { transactionList } from '@/api/remote-search'
+import { fetchFanList } from '@/api/fandata'
 
 export default {
   filters: {
-    statusFilter(status) {
-      const statusMap = {
-        success: 'success',
-        pending: 'danger'
-      }
-      return statusMap[status]
-    },
-    orderNoFilter(str) {
-      return str.substring(0, 30)
-    }
   },
   data() {
     return {
@@ -46,8 +41,8 @@ export default {
   },
   methods: {
     fetchData() {
-      transactionList().then(response => {
-        this.list = response.data.items.slice(0, 8)
+      fetchFanList(this.$store.getters.username).then(response => {
+        this.list = response.data.fanlist
       })
     }
   }
