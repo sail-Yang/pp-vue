@@ -14,7 +14,20 @@ const name = defaultSettings.title || 'Power Prophet' // page title
 // You can change the port by the following methods:
 // port = 9528 npm run dev OR npm run dev --port = 9528
 const port = process.env.port || process.env.npm_config_port || 9528 // dev port
-
+const cdn = {
+  css: [
+    // element-ui css
+    'https://unpkg.com/element-ui@2.13.2/lib/theme-chalk/index.css'
+  ],
+  js: [
+    // vue must at first!
+    'https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.min.js',
+    'https://cdn.jsdelivr.net/npm/vue-router@3.0.6/dist/vue-router.min.js',
+    'https://cdn.jsdelivr.net/npm/vuex@3.1.0/dist/vuex.min.js',
+    // element-ui js
+    'https://unpkg.com/element-ui@2.13.2/lib/index.js'
+  ]
+}
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
   /**
@@ -47,6 +60,12 @@ module.exports = {
       alias: {
         '@': resolve('src')
       }
+    },
+    externals: {
+      vue: 'Vue',
+      'vue-router': 'VueRouter',
+      vuex: 'Vuex',
+      'element-ui': 'ELEMENT'
     }
   },
   chainWebpack(config) {
@@ -60,7 +79,10 @@ module.exports = {
         include: 'initial'
       }
     ])
-
+    config.plugin('html').tap(args => {
+      args[0].cdn = cdn
+      return args
+    })
     // when there are many pages, it will cause too many meaningless requests
     config.plugins.delete('prefetch')
 

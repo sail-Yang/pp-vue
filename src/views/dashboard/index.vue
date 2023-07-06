@@ -2,10 +2,10 @@
   <div class="dashboard-container">
     <panel-group />
     <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 24}" :lg="{span: 12}" :xl="{span: 12}" style="padding-right:8px;margin-bottom:30px;">
-        <transaction-table />
-      </el-col>
-      <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 24}" :lg="{span: 12}" :xl="{span: 12}" style="padding-right:8px;margin-bottom:30px;">
-        <bar-chart :fanlist="fanlist" />
+      <transaction-table />
+    </el-col>
+    <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 24}" :lg="{span: 12}" :xl="{span: 12}" style="padding-right:8px;margin-bottom:30px;">
+      <bar-chart :fanlist="fanlist" />
     </el-col>
   </div>
 </template>
@@ -30,7 +30,6 @@ export default {
   },
   mounted() {
     this.fetchData()
-    console.log(this.fanlist)
   },
   methods: {
     fetchData() {

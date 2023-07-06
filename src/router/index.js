@@ -54,7 +54,7 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/index',
     children: [{
-      path: 'index',
+      path: '/index',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
       meta: { title: '首页', icon: 'dashboard', noCache: true }
@@ -62,39 +62,70 @@ export const constantRoutes = [
   },
 
   {
-    path: '/realtime',
+    path: '/datashow',
     component: Layout,
-    redirect: 'realtime/index',
-    children: [{
-      path: 'index',
-      name: 'Realtime',
-      component: () => import('@/views/realtime/index'),
-      meta: { title: '实时功率预测', icon: 'table' }
-    }]
-  },
-
-  {
-    path: '/short',
-    component: Layout,
-    redirect: '/short/index',
-    children: [{
-      path: 'index',
-      name: 'Short',
-      component: () => import('@/views/shortpredict/index'),
-      meta: { title: '短期功率预测', icon: 'example' }
-    }]
-  },
-
-  {
-    path: '/weather',
-    component: Layout,
-    redirect: '/weather/index',
+    redirect: '/',
+    alwaysShow: true,
+    name: '数据展示',
+    meta: {
+      title: '数据展示',
+      icon: 'international'
+    },
     children: [
       {
-        path: 'index',
-        name: 'Weather',
-        component: () => import('@/views/weather/index'),
-        meta: { title: '气象监控', icon: 'international' }
+        path: 'humidity',
+        name: 'Humidity',
+        component: () => import('@/views/weather/humidity/index'),
+        meta: { title: '湿度', icon: 'tree-table', noCache: true }
+      },
+      {
+        path: 'pressure',
+        name: 'Pressure',
+        component: () => import('@/views/weather/pressure/index'),
+        meta: { title: '压力', icon: 'tree-table', noCache: true }
+      },
+      {
+        path: 'temperature',
+        name: 'Temperature',
+        component: () => import('@/views/weather/temperature/index'),
+        meta: { title: '温度', icon: 'tree-table', noCache: true }
+      },
+      {
+        path: 'wind',
+        name: 'Wind',
+        component: () => import('@/views/weather/wind/index'),
+        meta: { title: '风速', icon: 'tree-table', noCache: true }
+      },
+      {
+        path: 'direction',
+        name: 'Direction',
+        component: () => import('@/views/weather/direction/index'),
+        meta: { title: '风向', icon: 'tree-table', noCache: true }
+      }
+    ]
+  },
+  {
+    path: '/predict',
+    component: Layout,
+    redirect: '/',
+    alwaysShow: true,
+    name: '功率预测',
+    meta: {
+      title: '功率预测',
+      icon: 'chart'
+    },
+    children: [
+      {
+        path: 'realtime',
+        name: 'Realtime',
+        component: () => import('@/views/realtime/index'),
+        meta: { title: '实时功率预测', icon: 'table' }
+      },
+      {
+        path: 'period',
+        name: 'Short',
+        component: () => import('@/views/shortpredict/index'),
+        meta: { title: '自定义功率预测', icon: 'example' }
       }
     ]
   },
@@ -108,7 +139,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'Log',
         component: () => import('@/views/log/index'),
-        meta: { title: '日志', icon: 'bug' }
+        meta: { title: '预警日志', icon: 'bug' }
       }
     ]
   },
@@ -127,23 +158,12 @@ export const constantRoutes = [
     ]
   },
 
-  {
-    path: '/docs',
-    component: Layout,
-    children: [
-      {
-        path: 'https://www.sailyang.top',
-        meta: { title: '说明文档', icon: 'link' }
-      }
-    ]
-  },
-
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
 
 const createRouter = () => new Router({
-  // mode: 'history', // require service support
+  mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
 })

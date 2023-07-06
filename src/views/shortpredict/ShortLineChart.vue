@@ -1,10 +1,9 @@
 <template>
-  <div v-loading="loading" element-loading-text="拼命加载中" :class="className" :style="{ height: height, width: width }" />
+  <div :id="id" v-loading="loading" element-loading-text="拼命加载中" :class="className" :style="{height:height,width:width}" />
 </template>
 
 <script>
 import * as echarts from 'echarts'
-require('echarts/theme/macarons') // echarts theme
 import resize from '@/components/Charts/mixins/resize'
 import { predictByRealTime } from '@/api/fandata'
 import { chartTimeFormat } from '@/utils'
@@ -27,10 +26,6 @@ export default {
       type: String,
       default: '200px'
     },
-    chartData: {
-      type: Object,
-      required: true
-    },
     xdata: {
       type: Object,
       default(rawProps) { }
@@ -47,36 +42,27 @@ export default {
     }
   },
   watch: {
-    chartData: {
-      deep: true,
-      handler(val) {
-        this.setOptions(val)
-      }
-    },
     xdata: 'initChart'
   },
   mounted() {
     this.loading = true
-    this.$nextTick(() => {
-      if (sessionStorage.getItem('periodXdata') !== null) {
-        this.xdata = JSON.parse(sessionStorage.getItem('periodXdata'))
-      } else {
-        predictByRealTime(this.$store.getters.username, this.fanid, this.$store.getters.model).then(
-          response => {
-            sessionStorage.setItem('periodXdata', JSON.stringify(response.data))
-            this.xdata = response.data
-          }
-        ).catch(() => {
-          this.$message({
-            message: '服务器错误',
-            type: 'failure'
-          })
-          this.loading = false
+    if (sessionStorage.getItem('periodXdata') !== null) {
+      this.xdata = JSON.parse(sessionStorage.getItem('periodXdata'))
+    } else {
+      predictByRealTime(this.$store.getters.username, 1, this.$store.getters.model).then(
+        response => {
+          sessionStorage.setItem('periodXdata', JSON.stringify(response.data))
+          this.xdata = JSON.parse(sessionStorage.getItem('periodXdata'))
+        }
+      ).catch(() => {
+        this.$message({
+          message: '服务器错误',
+          type: 'failure'
         })
-      }
-      this.initChart()
-      this.loading = false
-    })
+        this.loading = false
+      })
+    }
+    this.initChart()
   },
   beforeDestroy() {
     if (!this.chart) {
@@ -87,47 +73,65 @@ export default {
   },
   methods: {
     initChart() {
-      this.chart = echarts.init(this.$el, 'macarons')
-      this.setOptions(this.chartData)
-      this.loading = false
-    },
-    setOptions({ expectedData, actualData } = {}) {
+      this.chart = echarts.init(document.getElementById(this.id))
       this.chart.setOption({
+        backgroundColor: '#333b4a',
         title: {
-          top: 50,
-          text: '功率预测 · ' + this.fanid + '号风机',
+          top: 20,
+          text: '自定义功率预测 · ' + this.fanid + '号风机',
           textStyle: {
             fontWeight: 'normal',
             fontSize: 18,
-            color: '#0a4494'
+            color: '#F1F1F3'
           },
-          left: '5%'
-        },
-        xAxis: {
-          type: 'category',
-          data: this.xdata.fanDataList.map(item => chartTimeFormat(item.datatime)),
-          boundaryGap: false,
-          axisTick: {
-            show: false
-          }
-        },
-        grid: {
-          left: '2%',
-          right: '2%',
-          bottom: '2%',
-          top: 30,
-          containLabel: true
+          left: '1%'
         },
         tooltip: {
           trigger: 'axis',
           axisPointer: {
-            type: 'cross'
-          },
-          padding: [5, 10]
+            lineStyle: {
+              color: '#57617B'
+            }
+          }
         },
+        legend: {
+          top: 30,
+          icon: 'rect',
+          itemWidth: 14,
+          itemHeight: 5,
+          itemGap: 13,
+          data: ['预测功率(YD15)', '实际功率(PREPOWER)', '预测功率(备选,ROUND(A.POWER,0))'],
+          right: '4%',
+          textStyle: {
+            fontSize: 12,
+            color: '#F1F1F3'
+          }, selected: {
+            '预测功率(备选,ROUND(A.POWER,0))': false,
+            '实际功率(PREPOWER)': false
+          }
+        },
+        grid: {
+          top: 100,
+          left: '2%',
+          right: '4%',
+          bottom: '2%',
+          containLabel: true
+        },
+        xAxis: [{
+          type: 'category',
+          name: '时间',
+          boundaryGap: false,
+          axisLine: {
+            lineStyle: {
+              color: '#bdb7ac'
+            },
+            onZero: false
+          },
+          data: this.xdata.fanDataList.map(item => chartTimeFormat(item.datatime).replace(' ', '\n'))
+        }],
         yAxis: [{
           type: 'value',
-          name: '(KW)',
+          name: '(功率/KW)',
           axisTick: {
             show: false
           },
@@ -141,75 +145,117 @@ export default {
             textStyle: {
               fontSize: 14
             }
+          },
+          splitLine: {
+            lineStyle: {
+              color: '#57617B'
+            }
           }
         }],
-        legend: {
-          itemWidth: 14,
-          itemHeight: 5,
-          itemGap: 13,
-          top: 30,
-          icon: 'rect',
-          data: ['实际功率(POWER)', '预测功率(YD15)', '预测功率(备选,PREPOWER)'],
-          right: '4%'
-        },
         series: [{
-          name: '实际功率(POWER)', itemStyle: {
-            normal: {
-              color: '#FF005A',
-              lineStyle: {
-                color: '#FF005A',
-                width: 2
-              }
-            }
-          },
-          smooth: true,
-          type: 'line',
-          data: this.xdata.fanDataList.map(item => item.power),
-          animationDuration: 2800,
-          animationEasing: 'cubicInOut'
-        },
-        {
           name: '预测功率(YD15)',
-          smooth: true,
           type: 'line',
-          itemStyle: {
+          smooth: true,
+          symbol: 'circle',
+          symbolSize: 5,
+          showSymbol: false,
+          lineStyle: {
             normal: {
-              color: '#3888fa',
-              lineStyle: {
-                color: '#3888fa',
-                width: 2
-              },
-              areaStyle: {
-                color: '#f3f8ff'
-              }
+              width: 1
             }
           },
-          data: this.xdata.fanDataList.map(item => item.yd15),
-          animationDuration: 2800,
-          animationEasing: 'quadraticOut'
-        },
-        {
-          name: '预测功率(备选,PREPOWER)',
-          smooth: true,
-          type: 'line',
-          itemStyle: {
+          areaStyle: {
             normal: {
-              color: '#487a47',
-              lineStyle: {
-                color: '#487a47',
-                width: 2
-              },
-              areaStyle: {
-                color: '#f3f8ff'
-              }
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                offset: 0,
+                color: 'rgba(155, 179, 250, 0.5)'
+              }, {
+                offset: 0.8,
+                color: 'rgba(155, 179, 250, 0)'
+              }], false),
+              shadowColor: 'rgba(0, 0, 0, 0.1)',
+              shadowBlur: 10
             }
           },
-          data: this.xdata.fanDataList.map(item => item.prePower),
-          animationDuration: 2800,
-          animationEasing: 'quadraticOut'
-        }
-        ]
+          itemStyle: {
+            normal: {
+              color: 'rgb(155, 179, 250)',
+              borderColor: 'rgba(155, 179, 250,0.2)',
+              borderWidth: 12
+
+            }
+          },
+          data: this.xdata.fanDataList.map(item => item.yd15)
+        }, {
+          name: '预测功率(备选,ROUND(A.POWER,0))',
+          type: 'line',
+          smooth: true,
+          symbol: 'circle',
+          symbolSize: 5,
+          showSymbol: false,
+          lineStyle: {
+            normal: {
+              width: 1
+            }
+          },
+          areaStyle: {
+            normal: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                offset: 0,
+                color: 'rgba(157, 250, 155, 0.5)'
+              }, {
+                offset: 0.8,
+                color: 'rgba(157, 250, 155, 0)'
+              }], false),
+              shadowColor: 'rgba(0, 0, 0, 0.1)',
+              shadowBlur: 10
+            }
+          },
+          itemStyle: {
+            normal: {
+              color: 'rgb(157, 250, 155)',
+              borderColor: 'rgba(157, 250, 155,0.27)',
+              borderWidth: 12
+
+            }
+          },
+          data: this.xdata.fanDataList.map(item => item.power)
+        }, {
+          name: '实际功率(PREPOWER)',
+          type: 'line',
+          smooth: true,
+          symbol: 'circle',
+          symbolSize: 5,
+          showSymbol: false,
+          lineStyle: {
+            normal: {
+              width: 1
+            }
+          },
+          areaStyle: {
+            normal: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                offset: 0,
+                color: 'rgba(250, 193, 239, 0.5)'
+              }, {
+                offset: 0.8,
+                color: 'rgba(250, 193, 239, 0)'
+              }], false),
+              shadowColor: 'rgba(0, 0, 0, 0.1)',
+              shadowBlur: 10
+            }
+          },
+          itemStyle: {
+            normal: {
+              color: 'rgb(250, 193, 239)',
+              borderColor: 'rgba(250, 193, 239,0.2)',
+              borderWidth: 12
+            }
+          },
+          data: this.xdata.fanDataList.map(item => item.prePower)
+        }]
       })
+      this.loading = false
     }
   }
 }

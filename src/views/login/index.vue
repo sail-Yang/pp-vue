@@ -2,8 +2,8 @@
 <template>
   <div class="login-container">
     <el-row :gutter="3" type="flex" align="middle">
-      <el-col :xs="{span: 0}" :sm="{span: 12}" :md="{span: 6}" :lg="{span: 7}" :xl="{span: 7}" />
-      <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 12}" :lg="{span: 10}" :xl="{span: 10}" style="padding-right:8px;margin-bottom:30px;">
+      <el-col :xs="{span: 0}" :sm="{span: 12}" :md="{span: 6}" :lg="{span: 7}" :xl="{span: 8}" />
+      <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 12}" :lg="{span: 10}" :xl="{span: 8}">
         <div class="form-container">
           <el-tabs v-model="activeName" @tab-click="handleClick">
             <el-tab-pane label="账号密码登录" name="first">
@@ -15,7 +15,7 @@
                   <el-input
                     ref="username"
                     v-model="loginForm.username"
-                    placeholder="用户名/邮箱"
+                    placeholder="用户名"
                     name="username"
                     type="text"
                     tabindex="1"
@@ -48,7 +48,7 @@
             <el-tab-pane label="邮箱验证码登录" name="second">
               <el-form ref="emailLoginForm" :model="emailLoginForm" class="login-form" auto-complete="on" label-position="left">
                 <el-form-item prop="email" :rules="emailRules">
-                  <span class="svg-container">
+                  <span class="svg-email-container">
                     <svg-icon icon-class="email" />
                   </span>
                   <el-input
@@ -62,9 +62,9 @@
                   />
                 </el-form-item>
                 <el-row>
-                  <el-col :span="12">
+                  <el-col :xs="{span: 12}" :sm="{span: 12}" :md="{span: 12}" :lg="{span: 12}" :xl="{span: 12}">
                     <el-form-item prop="emailCode" :inline="true" :rules="emailRules">
-                      <span class="svg-container">
+                      <span class="svg-email-container">
                         <svg-icon icon-class="password" />
                       </span>
                       <el-input
@@ -78,11 +78,11 @@
                       />
                     </el-form-item>
                   </el-col>
-                  <el-col :span="5">&nbsp;</el-col>
-                  <el-col :span="6">
+                  <el-col :xs="{span: 2}" :sm="{span: 2}" :md="{span: 5}" :lg="{span: 5}" :xl="{span: 5}">&nbsp;</el-col>
+                  <el-col :xs="{span: 6}" :sm="{span: 6}" :md="{span: 6}" :lg="{span: 6}" :xl="{span: 6}">
                     <el-button type="primary" :disabled="codeDisabled" style="height: 54px;" @click.native.prevent="getEmailCode">{{ buttonText }}</el-button>
                   </el-col>
-                  <el-col :span="1">&nbsp;</el-col>
+                  <el-col :xs="{span: 1}" :sm="{span: 1}" :md="{span: 1}" :lg="{span: 1}" :xl="{span: 1}">&nbsp;</el-col>
                 </el-row>
               </el-form>
               <el-button :loading="loading" type="primary" :rules="emailRules" style="width:45%;margin-bottom:10px;" @click.native.prevent="handleEmailLogin">登录</el-button>
@@ -91,7 +91,7 @@
           </el-tabs>
         </div>
       </el-col>
-      <el-col :xs="{span: 0}" :sm="{span: 12}" :md="{span: 6}" :lg="{span: 7}" :xl="{span: 7}" />
+      <el-col :xs="{span: 0}" :sm="{span: 12}" :md="{span: 6}" :lg="{span: 7}" :xl="{span: 8}" />
     </el-row>
   </div>
 </template>
@@ -192,6 +192,7 @@ export default {
             this.$router.push({ path: this.redirect || '/index' })
             this.loading = false
           }).catch(() => {
+            console.log()
             this.loading = false
           })
         } else {
@@ -330,13 +331,19 @@ $light_gray:#eee;
   }
 
   .svg-container {
-    padding: 6px 5px 6px 15px;
+    padding: 6px 4px 5px 15px;
     color: $dark_gray;
     vertical-align: middle;
     width: 30px;
     display: inline-block;
   }
-
+  .svg-email-container {
+    padding: 6px 4px 5px 15px;
+    color: $dark_gray;
+    vertical-align: middle;
+    width: 20px;
+    display: inline-block;
+  }
   .show-pwd {
     position: absolute;
     right: 10px;

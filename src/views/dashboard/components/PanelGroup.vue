@@ -7,7 +7,7 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            访问次数
+            用户访问次数
           </div>
           <count-to :start-val="0" :end-val="this.$store.getters.visitNums" :duration="3200" class="card-panel-num" />
         </div>
@@ -20,7 +20,7 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            预测次数
+            用户预测次数
           </div>
           <count-to :start-val="0" :end-val="logNums" :duration="3000" class="card-panel-num" />
         </div>
@@ -33,7 +33,7 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            风机数
+            总风机数
           </div>
           <count-to :start-val="0" :end-val="fans" :duration="3200" class="card-panel-num" />
         </div>

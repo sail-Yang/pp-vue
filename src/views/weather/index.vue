@@ -52,7 +52,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">提交</el-button>
-          <el-button type="info" @click="dialogVisible = true">导出数据</el-button>
+          <el-button type="info" @click="dialogVisible = true">导出</el-button>
         </el-form-item>
       </el-form>
     </el-row>
@@ -97,7 +97,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" icon="el-icon-document" @click="handleDownload">Export Excel</el-button>
+        <el-button type="primary" icon="el-icon-document" @click="handleDownload">导出</el-button>
       </span>
     </el-dialog>
   </div>

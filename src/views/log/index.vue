@@ -1,103 +1,114 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-row>
-        <el-col :span="2">
+      <el-row :gutter="1" type="flex" align="middle">
+        <el-col :xs="{span: 24}" :sm="{span: 4}" :lg="{span: 4}">
           <el-select v-model="listQuery.fanid" placeholder="风机编号" clearable class="filter-item">
             <el-option v-for="item in fanOptions" :key="item" :label="item+'号风机'" :value="item" />
           </el-select>
         </el-col>
-        <el-col :span="3">
+        <el-col :xs="{span: 24}" :sm="{span: 4}" :lg="{span: 4}">
           <el-select v-model="listQuery.model" placeholder="模型" clearable class="filter-item">
             <el-option v-for="item in modelOptions" :key="item.key" :label="item.display_name" :value="item.key" />
           </el-select>
         </el-col>
-        <el-col :span="3">
+        <el-col :xs="{span: 24}" :sm="{span: 5}" :lg="{span: 4}">
           <el-select v-model="listQuery.type" placeholder="类型" clearable class="filter-item">
             <el-option v-for="item in typeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
           </el-select>
         </el-col>
-        <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-          搜素
-        </el-button>
-        <el-button v-waves class="filter-item" type="primary" icon="el-icon-download" @click="exportLogDialogVisible=true">
-          导出
-        </el-button>
+        <el-col :xs="{span: 24}" :sm="{span: 2}" :lg="{span: 2}">
+          <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+            搜素
+          </el-button>
+        </el-col>
+        <el-col :xs="{span: 24}" :sm="{span: 2}" :lg="{span: 2}">
+          <el-button v-waves class="filter-item" type="primary" icon="el-icon-download" @click="setDialogWidth();exportLogDialogVisible=true">
+            导出
+          </el-button>
+        </el-col>
       </el-row>
     </div>
-
-    <el-table
-      :key="tableKey"
-      v-loading="listLoading"
-      :data="list"
-      border
-      fit
-      highlight-current-row
-      style="width: 100%;"
-    >
-      <el-table-column label="日志编号" prop="id" sortable align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.id }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="记录时间" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.date | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="风机编号" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.fanId }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="预测类型" align="center">
-        <template slot-scope="{row}">
-          <span>{{ typeMap.get(row.type) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="预测模型" align="center">
-        <template slot-scope="{row}">
-          <span>{{ modelMap.get(row.model) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="开始预测时间" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.startTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="结束预测时间" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.endTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="预测结果" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.status === 'success' ? '预测成功' : '预测失败' }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="异常数据" align="center">
-        <template slot-scope="{row}">
-          <el-button v-if="row.nums > 0" type="warning" size="mini" @click="queryOutliers(row);">
-            查看异常值
-          </el-button>
-          <el-button v-else type="info" size="mini" disabled="true">
-            无异常值
-          </el-button>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template slot-scope="{row,$index}">
-          <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row.id,$index)">
-            删除
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+    <el-row :gutter="1" type="flex" align="middle">
+      <el-col :xs="{span: 24}" :sm="{span: 2}" :lg="{span: 24}">
+        <el-table
+          :key="tableKey"
+          v-loading="listLoading"
+          :data="list"
+          border
+          fit
+          highlight-current-row
+          style="width: 100%;"
+        >
+          <el-table-column label="日志编号" prop="id" sortable align="center">
+            <template slot-scope="{row}">
+              <span>{{ row.id }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="记录时间" align="center">
+            <template slot-scope="{row}">
+              <span>{{ row.date | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="风机编号" align="center">
+            <template slot-scope="{row}">
+              <span>{{ row.fanId }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="预测类型" align="center">
+            <template slot-scope="{row}">
+              <span>{{ typeMap.get(row.type) }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="预测模型" align="center">
+            <template slot-scope="{row}">
+              <span>{{ modelMap.get(row.model) }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="开始预测时间" align="center">
+            <template slot-scope="{row}">
+              <span>{{ row.startTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="结束预测时间" align="center">
+            <template slot-scope="{row}">
+              <span>{{ row.endTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="预测结果" align="center">
+            <template slot-scope="{row}">
+              <span>{{ row.status === 'success' ? '预测成功' : '预测失败' }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="异常数据" align="center">
+            <template slot-scope="{row}">
+              <el-button v-if="row.nums > 0" type="warning" size="mini" @click="setDialogWidth();queryOutliers(row);">
+                查看异常值
+              </el-button>
+              <el-button v-else type="info" size="mini" disabled="true">
+                无异常值
+              </el-button>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+            <template slot-scope="{row,$index}">
+              <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row.id,$index)">
+                删除
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-row :gutter="3" type="flex">
+          <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 24}" :lg="{span: 12}" :xl="{span: 12}">
+            <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+          </el-col>
+        </el-row>
+      </el-col>
+    </el-row>
     <el-dialog
       title="异常值"
       :visible.sync="dialogVisible"
-      width="50%"
+      :width="dialogWidth"
     >
       <el-table
         :key="tableKey"
@@ -119,12 +130,12 @@
             <span>{{ row.date | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="yd15" align="center">
+        <el-table-column label="预测值(yd15)" align="center">
           <template slot-scope="{row}">
             <span>{{ row.yd15 }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="power" align="center">
+        <el-table-column label="备用预测值(ROUND(A.POWER,0))" align="center">
           <template slot-scope="{row}">
             <span>{{ row.power }}</span>
           </template>
@@ -132,13 +143,13 @@
       </el-table>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" icon="el-icon-document" @click="exportOutlierDialogVisible=true">导出为表格</el-button>
+        <el-button type="primary" icon="el-icon-document" @click="setDialogWidth();exportOutlierDialogVisible=true">导出为表格</el-button>
       </span>
     </el-dialog>
     <el-dialog
       title="导出日志"
       :visible.sync="exportLogDialogVisible"
-      width="40%"
+      :width="dialogWidth"
     >
       <el-form :model="exportform">
         <el-form-item>
@@ -176,7 +187,7 @@
     <el-dialog
       title="导出异常值序列"
       :visible.sync="exportOutlierDialogVisible"
-      width="40%"
+      :width="dialogWidth"
     >
       <el-form :model="exportform">
         <el-form-item>
@@ -220,11 +231,10 @@ import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
 const modelOptions = [
-  { key: 'multi', display_name: '多模型(CNN-LSTM)' },
+  { key: 'multi', display_name: '多模型(LMLP-RNN-LSTM)' },
   { key: 'single', display_name: '单模型(LSTM)' }
 ]
 
-// arr to obj, such as { CN : "China", US : "USA" }
 const modelKeyValue = modelOptions.reduce((acc, cur) => {
   acc[cur.key] = cur.display_name
   return acc
@@ -300,6 +310,7 @@ export default {
         endtime: new Date(),
         status: ''
       },
+      dialogWidth: 0,
       dialogFormVisible: false,
       exportOutlierDialogVisible: false,
       exportLogDialogVisible: false,
@@ -311,12 +322,19 @@ export default {
       ]),
       modelMap: new Map([
         ['single', '单模型(LSTM)'],
-        ['multi', '多模型(CNN-LSTM)']
+        ['multi', '多模型(LMLP-RNN-LSTM)']
       ])
     }
   },
   created() {
     this.getList()
+  },
+  mounted() {
+    window.onresize = () => {
+      return (() => {
+        this.setDialogWidth()
+      })()
+    }
   },
   methods: {
     getList() {
@@ -351,7 +369,7 @@ export default {
       this.outlierLoading = true
       fetchOutliers(row.id).then(response => {
         this.outliers = response.data.outliers
-        this.total = response.data.total
+        this.outlierTotal = response.data.total
       })
       this.outlierLoading = false
     },
@@ -366,8 +384,8 @@ export default {
       })
       this.list.splice(index, 1)
     },
-    formatJson(filterVal) {
-      return this.list.map(v => filterVal.map(j => {
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => {
         if (j === 'timestamp') {
           return parseTime(v[j])
         } else {
@@ -395,7 +413,7 @@ export default {
         const data = this.formatJson(filterVal, list)
         excel.export_json_to_excel({
           header: tHeader,
-          data,
+          data: data,
           filename: this.exportform.filename || '日志记录',
           autoWidth: this.exportform.autoWidth,
           bookType: this.exportform.type
@@ -409,16 +427,26 @@ export default {
         const tHeader = ['编号', '预测时间点', 'yd15', 'power']
         const filterVal = ['id', 'date', 'yd15', 'power']
         const outliers = this.outliers
-        const data = this.formatJson(filterVal, outliers)
+        const data1 = this.formatJson(filterVal, outliers)
         excel.export_json_to_excel({
           header: tHeader,
-          data,
+          data: data1,
           filename: this.exportform.filename || '异常值序列',
           autoWidth: this.exportform.autoWidth,
           bookType: this.exportform.type
         })
         this.outlierDownloadLoading = false
       })
+    },
+    setDialogWidth() {
+      console.log(document.body.clientWidth)
+      var val = document.body.clientWidth
+      const def = 600 // 默认宽度
+      if (val < def) {
+        this.dialogWidth = '80%'
+      } else {
+        this.dialogWidth = def + 'px'
+      }
     }
   }
 }

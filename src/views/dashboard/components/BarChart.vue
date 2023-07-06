@@ -73,20 +73,22 @@ export default {
           }
         },
         grid: {
-          top: 10,
-          left: '2%',
-          right: '2%',
-          bottom: '3%',
+          top: 60,
+          left: '3%',
+          right: '8%',
+          bottom: '0%',
           containLabel: true
         },
         xAxis: [{
           type: 'category',
-          data: this.fanlist.map(item => (item.id + '号风机')),
+          name: '风机编号',
+          data: this.fanlist.map(item => item.id),
           axisTick: {
             alignWithLabel: true
           }
         }],
         yAxis: [{
+          name: '(近日预警次数/次)',
           type: 'value',
           axisTick: {
             show: false

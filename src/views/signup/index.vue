@@ -1,119 +1,124 @@
-
 <template>
-  <el-container>
-    <!-- <el-header>
-      <div class="sidebar-logo-container">
-        <transition name="sidebarLogoFade">
-          <router-link v-if="true" key="true" class="sidebar-logo-link" to="/ogin">
-            <img :src="logo" class="sidebar-logo">
-            <h1 class="sidebar-title">{{ title }} </h1>
-          </router-link>
-        </transition>
-      </div>
-    </el-header> -->
-    <el-main>
-      <div class="signup-container">
-        <el-form
-          ref="signUpForm"
-          :model="signUpForm"
-          class="login-form"
-          label-position="left"
-        >
-          <el-form-item prop="username" :rules="signupRoles">
-            <span class="svg-container">
-              <svg-icon icon-class="user" />
-            </span>
-            <el-input
-              ref="username"
-              v-model="signUpForm.username"
-              placeholder="设置用户名"
-              name="username"
-              type="text"
-              tabindex="1"
-            />
-          </el-form-item>
-          <el-form-item prop="email" :rules="signupRoles">
-            <span class="svg-container">
-              <svg-icon icon-class="email" />
-            </span>
-            <el-input
-              ref="email"
-              v-model="signUpForm.email"
-              placeholder="邮箱"
-              name="email"
-              type="text"
-              tabindex="1"
-              auto-complete="on"
-            />
-          </el-form-item>
-          <el-row>
-            <el-col :span="12">
-              <el-form-item prop="emailCode" :inline="true" :rules="signupRoles">
+  <!-- <el-header>
+    <div class="sidebar-logo-container">
+      <transition name="sidebarLogoFade">
+        <router-link v-if="true" key="true" class="sidebar-logo-link" to="/ogin">
+          <img :src="logo" class="sidebar-logo">
+          <h1 class="sidebar-title">{{ title }} </h1>
+        </router-link>
+      </transition>
+    </div>
+  </el-header> -->
+  <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 12}" :lg="{span: 10}" :xl="{span:24}">
+    <div class="signup-container">
+      <el-row :gutter="3" type="flex" align="middle">
+        <el-col :xs="{span: 0}" :sm="{span: 12}" :md="{span: 6}" :lg="{span: 7}" :xl="{span: 8}" />
+        <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 12}" :lg="{span: 10}" :xl="{span: 8}">
+          <div class="form-container">
+            <el-form
+              ref="signUpForm"
+              :model="signUpForm"
+              class="login-form"
+              label-position="left"
+            >
+              <el-form-item prop="username" :rules="signupRoles">
+                <span class="svg-container">
+                  <svg-icon icon-class="user" />
+                </span>
+                <el-input
+                  ref="username"
+                  v-model="signUpForm.username"
+                  placeholder="设置用户名"
+                  name="username"
+                  type="text"
+                  tabindex="1"
+                />
+              </el-form-item>
+              <el-form-item prop="email" :rules="signupRoles">
+                <span class="svg-container">
+                  <svg-icon icon-class="email" />
+                </span>
+                <el-input
+                  ref="email"
+                  v-model="signUpForm.email"
+                  placeholder="邮箱"
+                  name="email"
+                  type="text"
+                  tabindex="1"
+                  auto-complete="on"
+                />
+              </el-form-item>
+              <el-row>
+                <el-col :span="12">
+                  <el-form-item prop="emailCode" :inline="true" :rules="signupRoles">
+                    <span class="svg-email-container">
+                      <svg-icon icon-class="password" />
+                    </span>
+                    <el-input
+                      ref="emailCode"
+                      v-model="signUpForm.emailCode"
+                      placeholder="邮箱验证码"
+                      name="emailCode"
+                      tabindex="2"
+                      auto-complete="on"
+                      @keyup.enter.native="handleLogin"
+                    />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="3">&nbsp;</el-col>
+                <el-col :span="6">
+                  <el-button type="primary" :disabled="codeDisabled" style="height: 54px;" @click.native.prevent="getEmailCode">{{ buttonText }}</el-button>
+                </el-col>
+                <el-col :span="1">&nbsp;</el-col>
+              </el-row>
+              <el-form-item prop="password" :rules="signupRoles">
                 <span class="svg-container">
                   <svg-icon icon-class="password" />
                 </span>
                 <el-input
-                  ref="emailCode"
-                  v-model="signUpForm.emailCode"
-                  placeholder="邮箱验证码"
-                  name="emailCode"
+                  :key="passwordType"
+                  ref="password"
+                  v-model="signUpForm.password"
+                  :type="passwordType"
+                  placeholder="设置密码"
+                  name="password"
                   tabindex="2"
-                  auto-complete="on"
-                  @keyup.enter.native="handleLogin"
+                  @keyup.enter.native="handleSignUp"
                 />
+                <span
+                  class="show-pwd"
+                  @click="showPwd"
+                >
+                  <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+                </span>
               </el-form-item>
-            </el-col>
-            <el-col :span="5">&nbsp;</el-col>
-            <el-col :span="6">
-              <el-button type="primary" :disabled="codeDisabled" style="height: 54px;" @click.native.prevent="getEmailCode">{{ buttonText }}</el-button>
-            </el-col>
-            <el-col :span="1">&nbsp;</el-col>
-          </el-row>
-          <el-form-item prop="password" :rules="signupRoles">
-            <span class="svg-container">
-              <svg-icon icon-class="password" />
-            </span>
-            <el-input
-              :key="passwordType"
-              ref="password"
-              v-model="signUpForm.password"
-              :type="passwordType"
-              placeholder="设置密码"
-              name="password"
-              tabindex="2"
-              @keyup.enter.native="handleSignUp"
-            />
-            <span
-              class="show-pwd"
-              @click="showPwd"
-            >
-              <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
-            </span>
-          </el-form-item>
-          <el-row>
-            <el-col :span="12">
-              <el-button
-                :loading="loading"
-                :disabled="buttonDisable"
-                type="primary"
-                class="el-button"
-                style="width:85%;margin-bottom:10px;"
-                @click.native.prevent="handleSignUp"
-              >立即注册</el-button>
-            </el-col>
-            <el-col :span="12">
-              <el-button
-                type="danger"
-                class="el-button"
-                style="width:85%;margin-bottom:10px;"
-                @click.native.prevent="goOff"
-              >返回</el-button>
-            </el-col>
-          </el-row>
-        </el-form>
-      </div>
-    </el-main>
-  </el-container>
+              <el-row>
+                <el-col :span="12">
+                  <el-button
+                    :loading="loading"
+                    :disabled="buttonDisable"
+                    type="primary"
+                    class="el-button"
+                    style="width:85%;margin-bottom:10px;"
+                    @click.native.prevent="handleSignUp"
+                  >立即注册</el-button>
+                </el-col>
+                <el-col :span="12">
+                  <el-button
+                    type="danger"
+                    class="el-button"
+                    style="width:85%;margin-bottom:10px;"
+                    @click.native.prevent="goOff"
+                  >返回</el-button>
+                </el-col>
+              </el-row>
+            </el-form>
+          </div>
+        </el-col>
+        <el-col :xs="{span: 0}" :sm="{span: 12}" :md="{span: 6}" :lg="{span: 7}" :xl="{span: 8}" />
+      </el-row>
+    </div>
+  </el-col>
 </template>
 
 <script>
@@ -237,49 +242,7 @@ export default {
 </script>
 
 <style lang="scss">
-.el-header {
-  background-color: #37334a;
-  color: #E9EEF3;
-  text-align: left;
-  line-height: 60px;
-}
 
-body>.el-container {
-  margin-bottom: 40px;
-}
-
-.sidebar-logo-container {
-  position: relative;
-  width: 100%;
-  height: 50px;
-  line-height: 50px;
-  text-align: left;
-  overflow: hidden;
-
-  & .sidebar-logo-link {
-    height: 100%;
-    width: 100%;
-
-    & .sidebar-logo {
-      width: 32px;
-      height: 32px;
-      vertical-align: middle;
-      margin-right: 12px;
-    }
-
-    & .sidebar-title {
-      display: inline-block;
-      margin: 0;
-      color: #fff;
-      font-weight: 600;
-      line-height: 50px;
-      font-size: 14px;
-      font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
-      vertical-align: middle;
-    }
-  }
-
-}
 $bg:#283443;
 $light_gray:#fff;
 $cursor: #fff;
@@ -289,9 +252,9 @@ $cursor: #fff;
     color: $cursor;
   }
 }
-
 /* reset element-ui css */
 .signup-container {
+  background: url("https://cdn.staticaly.com/gh/sail-Yang/myImage@main/img/loginBackground .12r1yszcw4gw.png") no-repeat;
   background-position: center;
   height: 100%;
   width: 100%;
@@ -331,20 +294,17 @@ $cursor: #fff;
     color: #454545;
   }
 }
+
 $bg:#2d3a4b;
 $dark_gray:#889aa4;
 $light_gray:#eee;
 
 .signup-container {
-  min-height: 100%;
-  width: 100%;
-  overflow: hidden;
 
-  .login-form {
+  .form-container {
     border-radius: 15px;
     background-clip: padding-box;
     margin: 200px auto;
-    width: 600px;
     padding: 35px 35px 35px 35px;
     background: #fff;
     border: 1px solid #eaeaea;
@@ -352,10 +312,17 @@ $light_gray:#eee;
   }
 
   .svg-container {
-    padding: 6px 5px 6px 15px;
+    padding: 6px 4px 5px 15px;
     color: $dark_gray;
     vertical-align: middle;
     width: 30px;
+    display: inline-block;
+  }
+  .svg-email-container {
+    padding: 6px 4px 5px 15px;
+    color: $dark_gray;
+    vertical-align: middle;
+    width: 20px;
     display: inline-block;
   }
 

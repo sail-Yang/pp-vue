@@ -38,7 +38,7 @@ module.exports = [
 
   // get user info
   {
-    url: '/user/info\.*',
+    url: '/user/info1\.*',
     type: 'get',
     response: config => {
       const { token } = config.query

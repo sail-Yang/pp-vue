@@ -1,65 +1,77 @@
 <template>
   <div>
     <el-row>
-      <el-form v-loading="loading" element-loading-text="拼命加载中" :model="form" label-width="60px" :inline="true">
-        <el-form-item label="时间段">
-          <el-date-picker
-            v-model="form.startDate"
-            type="date"
-            placeholder="起始日期"
-            :picker-options="pickerOptions"
-          />
-          <el-time-select
-            v-model="form.startTime"
-            placeholder="起始时间"
-            :picker-options="{
-              start: '00:00',
-              step: '00:15',
-              end: '23:45'
-            }"
-          />
-          --
-          <el-date-picker
-            v-model="form.endDate"
-            type="date"
-            placeholder="结束日期"
-            :picker-options="pickerOptions"
-          />
-          <el-time-select
-            v-model="form.endTime"
-            :picker-options="{
-              start: '00:30',
-              step: '00:15',
-              end: '23:45',
-              minTime: startTime
-            }"
-            placeholder="结束时间"
-          />
-        </el-form-item>
-        <el-form-item label="风机">
-          <!-- <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 6}" :lg="{span: 6}" :xl="{span: 12}">
-            &nbsp;&nbsp;风机
-          </el-col> -->
-          <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 18}" :lg="{span: 18}" :xl="{span: 12}">
-            <el-select v-model="form.fan" placeholder="请选择风机的编号">
-              <el-option label="1号风机" value="1" />
-              <el-option label="2号风机" value="2" />
-              <el-option label="3号风机" value="3" />
-              <el-option label="4号风机" value="4" />
-              <el-option label="5号风机" value="5" />
-              <el-option label="6号风机" value="6" />
-              <el-option label="7号风机" value="7" />
-              <el-option label="8号风机" value="8" />
-              <el-option label="9号风机" value="9" />
-              <el-option label="10号风机" value="10" />
-            </el-select>
+      <el-form v-loading="loading" element-loading-text="拼命加载中" :model="form" label-width="80px" :inline="true">
+        <el-row :gutter="3" type="flex" align="middle">
+          <el-form-item label="开始时间">
+            <el-col :xs="{span: 24}" :sm="{span: 12}" :lg="{span: 12}">
+              <el-date-picker
+                v-model="form.startDate"
+                type="date"
+                placeholder="起始日期"
+                :picker-options="pickerOptions"
+              />
+            </el-col>
+            <el-col :xs="{span: 12}" :sm="{span: 12}" :lg="{span: 12}">
+              <el-time-select
+                v-model="form.startTime"
+                placeholder="起始时间"
+                :picker-options="{
+                  start: '00:00',
+                  step: '00:15',
+                  end: '23:45'
+                }"
+              />
+            </el-col>
+          </el-form-item>
+          <el-form-item label="结束时间">
+            <el-col :xs="{span: 24}" :sm="{span: 12}" :lg="{span: 12}">
+              <el-date-picker
+                v-model="form.endDate"
+                type="date"
+                placeholder="结束日期"
+                :picker-options="pickerOptions"
+              />
+            </el-col>
+            <el-col :xs="{span: 24}" :sm="{span: 12}" :lg="{span: 12}">
+              <el-time-select
+                v-model="form.endTime"
+                :picker-options="{
+                  start: '00:30',
+                  step: '00:15',
+                  end: '23:45',
+                  minTime: startTime
+                }"
+                placeholder="结束时间"
+              />
+            </el-col>
+          </el-form-item>
+        </el-row>
+        <el-row>
+          <el-col :xs="{span: 14}" :sm="{span: 12}" :lg="{span: 11}" :xl="{span: 11}">
+            <el-form-item label="选择风机">
+              <el-select v-model="form.fan" placeholder="请选择风机的编号">
+                <el-option label="1号风机" value="1" />
+                <el-option label="2号风机" value="2" />
+                <el-option label="3号风机" value="3" />
+                <el-option label="4号风机" value="4" />
+                <el-option label="5号风机" value="5" />
+                <el-option label="6号风机" value="6" />
+                <el-option label="7号风机" value="7" />
+                <el-option label="8号风机" value="8" />
+                <el-option label="9号风机" value="9" />
+                <el-option label="10号风机" value="10" />
+              </el-select>
+            </el-form-item>
           </el-col>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="onFind">查询功率</el-button>
-          <el-button type="danger" @click="onReal">查看实时</el-button>
-          <el-button type="info" @click="dialogVisible = true">导出数据</el-button>
-        </el-form-item>
+          <el-col :xs="{span: 24}" :sm="{span: 12}" :lg="{span: 13}">
+            <el-form-item>
+              <el-button type="primary" @click="onFind">查询功率</el-button>
+              <el-button type="danger" @click="onReal">实时预测</el-button>
+              <el-button type="info" @click="setDialogWidth();dialogVisible = true">导出预测数据</el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
     </el-row>
     <el-row>
@@ -70,7 +82,7 @@
     <el-dialog
       title="提示"
       :visible.sync="dialogVisible"
-      width="30%"
+      :width="dialogWidth"
       :before-close="handleClose"
     >
       <el-form :model="exportform">
@@ -134,6 +146,7 @@ export default {
       downloadLoading: false,
       options: ['xlsx', 'csv', 'txt'],
       xdata: {},
+      dialogWidth: 0,
       pickerOptions: {
         shortcuts: [{
           text: '今天',
@@ -160,6 +173,11 @@ export default {
     }
   },
   mounted() {
+    window.onresize = () => {
+      return (() => {
+        this.setDialogWidth()
+      })()
+    }
     if (sessionStorage.getItem('realLoading') !== null) {
       this.loading = (sessionStorage.getItem('realLoading').toLowerCase() === 'true')
     }
@@ -246,6 +264,16 @@ export default {
       return jsonData.map(v => filterVal.map(j => {
         return v[j]
       }))
+    },
+    setDialogWidth() {
+      console.log(document.body.clientWidth)
+      var val = document.body.clientWidth
+      const def = 600 // 默认宽度
+      if (val < def) {
+        this.dialogWidth = '80%'
+      } else {
+        this.dialogWidth = def + 'px'
+      }
     }
   }
 }

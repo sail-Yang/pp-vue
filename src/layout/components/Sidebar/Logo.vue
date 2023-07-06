@@ -25,7 +25,7 @@ export default {
   data() {
     return {
       title: '功率先知',
-      logo: 'https://cdn.staticaly.com/gh/sail-Yang/myImage@main/img/logo_transparent.444truy0g380.png'
+      logo: 'https://cdn.staticaly.com/gh/sail-Yang/myImage@main/img/风电场.i0lkbxafju0.svg'
     }
   }
 }

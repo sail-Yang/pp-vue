@@ -1,105 +1,130 @@
 <template>
   <div>
     <el-row>
-      <el-form :model="form" label-width="90px" :inline="true">
-        <el-row>
-          <el-form-item label="过去时间段">
-            <el-date-picker
-              v-model="form.startDate"
-              type="date"
-              placeholder="起始日期"
-              :picker-options="pickerOptions"
-            />
-            <el-time-select
-              v-model="form.startTime"
-              placeholder="起始时间"
-              :picker-options="{
-                start: '00:00',
-                step: '00:15',
-                end: '23:30'
-              }"
-            />
-            --
-            <el-date-picker
-              v-model="form.endDate"
-              type="date"
-              placeholder="结束日期"
-              :picker-options="pickerOptions"
-            />
-            <el-time-select
-              v-model="form.endTime"
-              :picker-options="{
-                start: '00:30',
-                step: '00:15',
-                end: '23:45',
-                minTime: startTime
-              }"
-              placeholder="结束时间"
-            />
+      <el-form :model="form" :inline="true">
+        <el-row :gutter="3" type="flex" align="middle">
+          <el-form-item label="训练集开始时间" label-width="120px">
+            <el-col :xs="{span: 24}" :sm="{span: 12}" :lg="{span: 12}">
+              <el-date-picker
+                v-model="form.startDate"
+                type="date"
+                placeholder="起始日期"
+                :picker-options="pickerOptions"
+              />
+            </el-col>
+            <el-col :xs="{span: 12}" :sm="{span: 12}" :lg="{span: 12}">
+              <el-time-select
+                v-model="form.startTime"
+                placeholder="起始时间"
+                :picker-options="{
+                  start: '00:00',
+                  step: '00:15',
+                  end: '23:30'
+                }"
+              />
+            </el-col>
           </el-form-item>
-          <el-form-item label="预测时长">
-            <el-select v-model="form.hours" placeholder="请选择时长">
-              <el-option label="12" value="12" />
-              <el-option label="24" value="24" />
-              <el-option label="36" value="36" />
-            </el-select>
-          </el-form-item>
-          <el-form-item v-loading="loading">
-            <el-button type="primary" @click="onSubmit">开始预测</el-button>
+          <el-form-item label="训练集结束时间" label-width="120px">
+            <el-col :xs="{span: 24}" :sm="{span: 12}" :lg="{span: 12}">
+              <el-date-picker
+                v-model="form.endDate"
+                type="date"
+                placeholder="结束日期"
+                :picker-options="pickerOptions"
+              />
+            </el-col>
+            <el-col :xs="{span: 24}" :sm="{span: 12}" :lg="{span: 12}">
+              <el-time-select
+                v-model="form.endTime"
+                :picker-options="{
+                  start: '00:30',
+                  step: '00:15',
+                  end: '23:45',
+                  minTime: startTime
+                }"
+                placeholder="结束时间"
+              />
+            </el-col>
           </el-form-item>
         </el-row>
-        <el-row>
-          <el-form-item label="预测时间段">
-            <el-date-picker
-              v-model="form.predStartDate"
-              type="date"
-              placeholder="起始日期"
-              :picker-options="pickerOptions"
-            />
-            <el-time-select
-              v-model="form.predStartTime"
-              placeholder="起始时间"
-              :picker-options="{
-                start: '00:00',
-                step: '00:15',
-                end: '23:30'
-              }"
-            />
-            --
-            <el-date-picker
-              v-model="form.predEndDate"
-              type="date"
-              placeholder="结束日期"
-              :picker-options="pickerOptions"
-            />
-            <el-time-select
-              v-model="form.predEndTime"
-              :picker-options="{
-                start: '00:30',
-                step: '00:15',
-                end: '23:45',
-                minTime: predStartTime
-              }"
-              placeholder="结束时间"
-            />
+        <el-row :gutter="3" type="flex" align="middle">
+          <el-col :xs="{span: 6}" :sm="{span: 12}" :lg="{span: 4}">
+            <el-form-item label="预测时长" label-width="80px">
+              <el-select v-model="form.hours" placeholder="请选择时长" style="width:100px">
+                <el-option label="12" value="12" />
+                <el-option label="24" value="24" />
+                <el-option label="36" value="36" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="{span: 7}" :sm="{span: 12}" :lg="{span: 6}">
+            <el-form-item label="风机" label-width="40px">
+              <el-select v-model="form.fan" placeholder="请选择风机的编号" style="width:120px">
+                <el-option label="1号风机" value="1" />
+                <el-option label="2号风机" value="2" />
+                <el-option label="3号风机" value="3" />
+                <el-option label="4号风机" value="4" />
+                <el-option label="5号风机" value="5" />
+                <el-option label="6号风机" value="6" />
+                <el-option label="7号风机" value="7" />
+                <el-option label="8号风机" value="8" />
+                <el-option label="9号风机" value="9" />
+                <el-option label="10号风机" value="10" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="{span: 1}" :sm="{span: 2}" :lg="{span: 1}" />
+          <el-col :xs="{span: 10}" :sm="{span: 10}" :lg="{span: 12}">
+            <el-form-item>
+              <el-button type="primary" @click="onSubmit">开始预测</el-button>
+              <el-button type="danger" @click="onCancel">取消预测</el-button>
+              <el-button type="info" @click="setDialogWidth();dialogVisible = true">导出预测数据</el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="3" type="flex">
+          <el-form-item label="预测开始时间" label-width="110px">
+            <el-col :xs="{span: 24}" :sm="{span: 12}" :lg="{span: 12}">
+              <el-date-picker
+                v-model="form.predStartDate"
+                type="date"
+                placeholder="起始日期"
+                :picker-options="pickerOptions"
+              />
+            </el-col>
+            <el-col :xs="{span: 12}" :sm="{span: 12}" :lg="{span: 12}">
+              <el-time-select
+                v-model="form.predStartTime"
+                placeholder="起始时间"
+                :picker-options="{
+                  start: '00:00',
+                  step: '00:15',
+                  end: '23:30'
+                }"
+              />
+            </el-col>
           </el-form-item>
-          <el-form-item label="风机">
-            <el-select v-model="form.fan" placeholder="请选择风机的编号">
-              <el-option label="1号风机" value="1" />
-              <el-option label="2号风机" value="2" />
-              <el-option label="3号风机" value="3" />
-              <el-option label="4号风机" value="4" />
-              <el-option label="5号风机" value="5" />
-              <el-option label="6号风机" value="6" />
-              <el-option label="7号风机" value="7" />
-              <el-option label="8号风机" value="8" />
-              <el-option label="9号风机" value="9" />
-              <el-option label="10号风机" value="10" />
-            </el-select>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="danger" @click="onCancel">取消预测</el-button>
-            <el-button type="info" @click="dialogVisible = true">导出数据</el-button>
+          <el-form-item label="预测结束时间">
+            <el-col :xs="{span: 24}" :sm="{span: 12}" :lg="{span: 12}">
+              <el-date-picker
+                v-model="form.predEndDate"
+                type="date"
+                placeholder="结束日期"
+                :picker-options="pickerOptions"
+              />
+            </el-col>
+            <el-col :xs="{span: 24}" :sm="{span: 12}" :lg="{span: 12}">
+              <el-time-select
+                v-model="form.predEndTime"
+                :picker-options="{
+                  start: '00:30',
+                  step: '00:15',
+                  end: '23:45',
+                  minTime: predStartTime
+                }"
+                placeholder="结束时间"
+              />
+            </el-col>
           </el-form-item>
         </el-row>
       </el-form>
@@ -112,7 +137,7 @@
     <el-dialog
       title="提示"
       :visible.sync="dialogVisible"
-      width="30%"
+      :width="dialogWidth"
       :before-close="handleClose"
     >
       <el-form :model="exportform">
@@ -145,7 +170,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" icon="el-icon-document" @click="handleDownload">Export Excel</el-button>
+        <el-button type="primary" icon="el-icon-document" @click="handleDownload">导出</el-button>
       </span>
     </el-dialog>
   </div>
@@ -177,6 +202,7 @@ export default {
         autoWidth: true,
         type: 'xlsx'
       },
+      dialogWidth: 0,
       dialogVisible: false,
       downloadLoading: false,
       options: ['xlsx', 'csv', 'txt'],
@@ -208,6 +234,11 @@ export default {
     }
   },
   mounted() {
+    window.onresize = () => {
+      return (() => {
+        this.setDialogWidth()
+      })()
+    }
     if (sessionStorage.getItem('periodLoading') !== null) {
       this.loading = (sessionStorage.getItem('periodLoading').toLowerCase() === 'true')
     }
@@ -242,7 +273,6 @@ export default {
       })
     },
     onCancel() {
-      debugger
       this.abortController.abort()
       sessionStorage.setItem('periodFan', this.form.fan)
       this.loading = false
@@ -281,6 +311,16 @@ export default {
       return jsonData.map(v => filterVal.map(j => {
         return v[j]
       }))
+    },
+    setDialogWidth() {
+      console.log(document.body.clientWidth)
+      var val = document.body.clientWidth
+      const def = 600 // 默认宽度
+      if (val < def) {
+        this.dialogWidth = '80%'
+      } else {
+        this.dialogWidth = def + 'px'
+      }
     }
   }
 }

@@ -100,33 +100,38 @@ export default {
           itemWidth: 14,
           itemHeight: 5,
           itemGap: 13,
-          data: ['实际功率(POWER)', '预测功率(YD15)', '预测功率(备选,PREPOWER)'],
+          data: ['预测功率(YD15)', '实际功率(PREPOWER)', '预测功率(备选,ROUND(A.POWER,0))'],
           right: '4%',
           textStyle: {
             fontSize: 12,
             color: '#F1F1F3'
+          }, selected: {
+            '预测功率(备选,ROUND(A.POWER,0))': false,
+            '实际功率(PREPOWER)': false
           }
         },
         grid: {
           top: 100,
           left: '2%',
-          right: '2%',
+          right: '4%',
           bottom: '2%',
           containLabel: true
         },
         xAxis: [{
           type: 'category',
+          name: '时间',
           boundaryGap: false,
           axisLine: {
             lineStyle: {
               color: '#bdb7ac'
-            }
+            },
+            onZero: false
           },
-          data: this.xdata.fanDataList.map(item => chartTimeFormat(item.datatime))
+          data: this.xdata.fanDataList.map(item => chartTimeFormat(item.datatime).replace(' ', '\n'))
         }],
         yAxis: [{
           type: 'value',
-          name: '(KW)',
+          name: '(功率/KW)',
           axisTick: {
             show: false
           },
@@ -163,10 +168,10 @@ export default {
             normal: {
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
                 offset: 0,
-                color: 'rgba(250, 184, 62, 0.5)'
+                color: 'rgba(155, 179, 250, 0.5)'
               }, {
                 offset: 0.8,
-                color: 'rgba(250, 184, 62, 0)'
+                color: 'rgba(155, 179, 250, 0)'
               }], false),
               shadowColor: 'rgba(0, 0, 0, 0.1)',
               shadowBlur: 10
@@ -174,15 +179,15 @@ export default {
           },
           itemStyle: {
             normal: {
-              color: 'rgb(250, 184, 62)',
-              borderColor: 'rgba(250, 184, 62,0.2)',
+              color: 'rgb(155, 179, 250)',
+              borderColor: 'rgba(155, 179, 250,0.2)',
               borderWidth: 12
 
             }
           },
           data: this.xdata.fanDataList.map(item => item.yd15)
         }, {
-          name: '预测功率(备选,PREPOWER)',
+          name: '预测功率(备选,ROUND(A.POWER,0))',
           type: 'line',
           smooth: true,
           symbol: 'circle',
@@ -197,10 +202,10 @@ export default {
             normal: {
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
                 offset: 0,
-                color: 'rgba(184, 62, 250, 0.5)'
+                color: 'rgba(157, 250, 155, 0.5)'
               }, {
                 offset: 0.8,
-                color: 'rgba(184, 62, 250, 0)'
+                color: 'rgba(157, 250, 155, 0)'
               }], false),
               shadowColor: 'rgba(0, 0, 0, 0.1)',
               shadowBlur: 10
@@ -208,46 +213,46 @@ export default {
           },
           itemStyle: {
             normal: {
-              color: 'rgb(184, 62, 250)',
-              borderColor: 'rgba(184, 62, 250,0.2)',
-              borderWidth: 12
-            }
-          },
-          data: this.xdata.fanDataList.map(item => item.prePower)
-        }, {
-          name: '实际功率(POWER)',
-          type: 'line',
-          smooth: true,
-          symbol: 'circle',
-          symbolSize: 5,
-          showSymbol: false,
-          lineStyle: {
-            normal: {
-              width: 1
-            }
-          },
-          areaStyle: {
-            normal: {
-              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                offset: 0,
-                color: 'rgba(227, 51, 76, 0.5)'
-              }, {
-                offset: 0.8,
-                color: 'rgba(227, 51, 76, 0)'
-              }], false),
-              shadowColor: 'rgba(0, 0, 0, 0.1)',
-              shadowBlur: 10
-            }
-          },
-          itemStyle: {
-            normal: {
-              color: 'rgb(227, 51, 76)',
-              borderColor: 'rgba(227, 51, 76,0.27)',
+              color: 'rgb(157, 250, 155)',
+              borderColor: 'rgba(157, 250, 155,0.27)',
               borderWidth: 12
 
             }
           },
           data: this.xdata.fanDataList.map(item => item.power)
+        }, {
+          name: '实际功率(PREPOWER)',
+          type: 'line',
+          smooth: true,
+          symbol: 'circle',
+          symbolSize: 5,
+          showSymbol: false,
+          lineStyle: {
+            normal: {
+              width: 1
+            }
+          },
+          areaStyle: {
+            normal: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                offset: 0,
+                color: 'rgba(250, 193, 239, 0.5)'
+              }, {
+                offset: 0.8,
+                color: 'rgba(250, 193, 239, 0)'
+              }], false),
+              shadowColor: 'rgba(0, 0, 0, 0.1)',
+              shadowBlur: 10
+            }
+          },
+          itemStyle: {
+            normal: {
+              color: 'rgb(250, 193, 239)',
+              borderColor: 'rgba(250, 193, 239,0.2)',
+              borderWidth: 12
+            }
+          },
+          data: this.xdata.fanDataList.map(item => item.prePower)
         }]
       })
       this.loading = false

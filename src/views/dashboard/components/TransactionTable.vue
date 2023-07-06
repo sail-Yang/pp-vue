@@ -1,18 +1,18 @@
 <template>
   <el-table :data="list" fit style="width: 100%;height: 100%;padding-top: 15px;">
-    <el-table-column label="风机编号">
+    <el-table-column label="风机编号" align="center">
       <template slot-scope="scope">
         {{ scope.row.id }}
       </template>
     </el-table-column>
-    <el-table-column label="总预测次数" align="center">
+    <el-table-column label="风机总预测次数" align="center">
       <template slot-scope="scope">
         <el-tag type="success">
           {{ scope.row.nums }}
         </el-tag>
       </template>
     </el-table-column>
-    <el-table-column label="近日预警" align="center">
+    <el-table-column label="近5日预警" align="center">
       <template slot-scope="scope">
         <el-button v-if="scope.row.outliers > 0" type="warning" size="mini">
           有异常值
