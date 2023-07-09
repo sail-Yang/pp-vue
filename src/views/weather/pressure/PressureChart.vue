@@ -110,8 +110,8 @@ export default {
         grid: {
           top: 100,
           left: '2%',
-          right: '4%',
-          bottom: '2%',
+          right: 65,
+          bottom: 65,
           containLabel: true
         },
         xAxis: [{

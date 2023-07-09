@@ -1,6 +1,6 @@
 import { login, logout, getInfo, signup, emailLogin, updateAccount, updateModel } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
-import { resetRouter } from '@/router'
+import router, { resetRouter } from '@/router'
 
 const getDefaultState = () => {
   return {
@@ -10,6 +10,7 @@ const getDefaultState = () => {
     model: 'multi',
     password: '',
     email: '',
+    roles: [],
     visitNums: 0
   }
 }
@@ -40,6 +41,9 @@ const mutations = {
   },
   SET_VISITNUMS: (state, visitNums) => {
     state.visitNums = visitNums
+  },
+  SET_ROLES: (state, roles) => {
+    state.roles = roles
   }
 }
 
@@ -89,7 +93,12 @@ const actions = {
         if (!data) {
           return reject('Verification failed, please Login again.')
         }
-        const { name, avatar } = data
+        const { roles, name, avatar } = data
+        if (!roles || roles.length <= 0) {
+          reject('getInfo: roles must be a non-null array!')
+        }
+        console.log('role', roles)
+        commit('SET_ROLES', roles)
         commit('SET_USERNAME', name)
         commit('SET_AVATAR', avatar)
         resolve(data)
@@ -131,6 +140,8 @@ const actions = {
   // remove token
   resetToken({ commit }) {
     return new Promise(resolve => {
+      commit('SET_ROLES', [])
+      commit('SET_TOKEN', '')
       removeToken() // must remove  token  first
       commit('RESET_STATE')
       resolve()
@@ -164,6 +175,24 @@ const actions = {
         reject(error)
       })
     })
+  },
+
+  // dynamically modify permissions
+  async changeRoles({ commit, dispatch }, role) {
+    const token = role + '-token'
+
+    commit('SET_TOKEN', token)
+    setToken(token)
+
+    const { roles } = await dispatch('getInfo')
+
+    resetRouter()
+    // generate accessible routes map based on roles
+    const accessRoutes = await dispatch('permission/generateRoutes', roles, { root: true })
+    // dynamically add accessible routes
+    router.addRoutes(accessRoutes)
+    // reset visited views and cached views
+    dispatch('tagsView/delAllViews', null, { root: true })
   }
 }
 

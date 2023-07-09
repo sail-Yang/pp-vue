@@ -60,8 +60,8 @@ module.exports = {
       alias: {
         '@': resolve('src')
       }
-    },
-    externals: {
+    }
+    ,externals: {
       vue: 'Vue',
       'vue-router': 'VueRouter',
       vuex: 'Vuex',

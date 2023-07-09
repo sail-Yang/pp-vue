@@ -62,3 +62,11 @@ export function fetchFanList(username) {
     params: { username }
   })
 }
+
+export function updateFanUser(fanid, username) {
+  return request({
+    url: '/fandata/fanuser',
+    method: 'post',
+    params: { username, fanid }
+  })
+}

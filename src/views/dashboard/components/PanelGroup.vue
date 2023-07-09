@@ -172,10 +172,10 @@ export default {
     }
 
     .card-panel-description {
-      float: right;
+      float: left;
       font-weight: bold;
       margin: 26px;
-      margin-left: 0px;
+      margin-left: 4px;
 
       .card-panel-text {
         line-height: 18px;
@@ -187,25 +187,6 @@ export default {
       .card-panel-num {
         font-size: 20px;
       }
-    }
-  }
-}
-
-@media (max-width:550px) {
-  .card-panel-description {
-    display: none;
-  }
-
-  .card-panel-icon-wrapper {
-    float: none !important;
-    width: 100%;
-    height: 100%;
-    margin: 0 !important;
-
-    .svg-icon {
-      display: block;
-      margin: 14px auto !important;
-      float: none !important;
     }
   }
 }

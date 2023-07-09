@@ -1,15 +1,17 @@
 <template>
-  <div>
-    <el-row>
+  <div class="all">
+    <el-row :gutter="1" type="flex" align="middle" style="flex-wrap: wrap; flex-direction: row">
       <el-form v-loading="loading" element-loading-text="拼命加载中" :model="form" label-width="80px" :inline="true">
         <el-row :gutter="3" type="flex" align="middle">
-          <el-form-item label="开始时间">
+          <el-form-item label="开始时间" align="left">
             <el-col :xs="{span: 24}" :sm="{span: 12}" :lg="{span: 12}">
               <el-date-picker
                 v-model="form.startDate"
+                class="date-picker"
                 type="date"
                 placeholder="起始日期"
                 :picker-options="pickerOptions"
+                :popper-class="children"
               />
             </el-col>
             <el-col :xs="{span: 12}" :sm="{span: 12}" :lg="{span: 12}">
@@ -33,7 +35,7 @@
                 :picker-options="pickerOptions"
               />
             </el-col>
-            <el-col :xs="{span: 24}" :sm="{span: 12}" :lg="{span: 12}">
+            <el-col :xs="{span: 12}" :sm="{span: 12}" :lg="{span: 12}">
               <el-time-select
                 v-model="form.endTime"
                 :picker-options="{
@@ -48,7 +50,7 @@
           </el-form-item>
         </el-row>
         <el-row>
-          <el-col :xs="{span: 14}" :sm="{span: 12}" :lg="{span: 11}" :xl="{span: 11}">
+          <el-col :xs="{span: 7}" :sm="{span: 12}" :lg="{span: 11}" :xl="{span: 8}">
             <el-form-item label="选择风机">
               <el-select v-model="form.fan" placeholder="请选择风机的编号">
                 <el-option label="1号风机" value="1" />
@@ -64,11 +66,12 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :xs="{span: 24}" :sm="{span: 12}" :lg="{span: 13}">
+          <el-col :xs="{span: 1}" :sm="{span: 0}" :lg="{span: 0}">&nbsp;</el-col>
+          <el-col :xs="{span: 10}" :sm="{span: 12}" :lg="{span: 10}">
             <el-form-item>
-              <el-button type="primary" @click="onFind">查询功率</el-button>
-              <el-button type="danger" @click="onReal">实时预测</el-button>
-              <el-button type="info" @click="setDialogWidth();dialogVisible = true">导出预测数据</el-button>
+              <el-button type="primary" size="small" @click="onFind">查询功率</el-button>
+              <el-button type="danger" size="small" @click="onReal">实时预测</el-button>
+              <el-button type="info" size="small" @click="setDialogWidth();dialogVisible = true">导出预测数据</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -280,15 +283,11 @@ export default {
 
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .chart-container {
   position: relative;
   width: 100%;
   height: calc(100vh - 84px);
-}
-
-.line {
-  text-align: center;
 }
 .el-col {
   min-height: 1px

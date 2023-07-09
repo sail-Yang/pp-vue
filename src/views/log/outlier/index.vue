@@ -1,36 +1,36 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-row :gutter="1" type="flex" align="middle">
-        <el-col :xs="{span: 24}" :sm="{span: 4}" :lg="{span: 4}">
+      <el-row :gutter="2" type="flex" align="middle" style="flex-wrap: wrap; flex-direction: row">
+        <el-col :xs="{span: 12}" :sm="{span: 12}" :lg="{span: 4}">
           <el-select v-model="listQuery.fanid" placeholder="风机编号" clearable class="filter-item">
             <el-option v-for="item in fanOptions" :key="item" :label="item+'号风机'" :value="item" />
           </el-select>
         </el-col>
-        <el-col :xs="{span: 24}" :sm="{span: 4}" :lg="{span: 4}">
+        <el-col :xs="{span: 12}" :sm="{span: 12}" :lg="{span: 4}">
           <el-select v-model="listQuery.model" placeholder="模型" clearable class="filter-item">
             <el-option v-for="item in modelOptions" :key="item.key" :label="item.display_name" :value="item.key" />
           </el-select>
         </el-col>
-        <el-col :xs="{span: 24}" :sm="{span: 5}" :lg="{span: 4}">
+        <el-col :xs="{span: 12}" :sm="{span: 12}" :lg="{span: 4}">
           <el-select v-model="listQuery.type" placeholder="类型" clearable class="filter-item">
             <el-option v-for="item in typeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
           </el-select>
         </el-col>
-        <el-col :xs="{span: 24}" :sm="{span: 2}" :lg="{span: 2}">
-          <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+        <el-col :xs="{span: 6}" :sm="{span: 6}" :lg="{span: 4}">
+          <el-button v-waves class="filter-item" type="primary" size="small" icon="el-icon-search" @click="handleFilter">
             搜素
           </el-button>
         </el-col>
-        <el-col :xs="{span: 24}" :sm="{span: 2}" :lg="{span: 2}">
-          <el-button v-waves class="filter-item" type="primary" icon="el-icon-download" @click="setDialogWidth();exportLogDialogVisible=true">
+        <el-col :xs="{span: 6}" :sm="{span: 6}" :lg="{span: 4}">
+          <el-button v-waves class="filter-item" type="info" size="small" icon="el-icon-download" @click="setDialogWidth();exportLogDialogVisible=true">
             导出
           </el-button>
         </el-col>
       </el-row>
     </div>
     <el-row :gutter="1" type="flex" align="middle">
-      <el-col :xs="{span: 24}" :sm="{span: 2}" :lg="{span: 24}">
+      <el-col :xs="{span: 24}" :sm="{span: 24}" :lg="{span: 24}">
         <el-table
           :key="tableKey"
           v-loading="listLoading"
@@ -80,7 +80,7 @@
               <span>{{ row.status === 'success' ? '预测成功' : '预测失败' }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="异常数据" align="center">
+          <el-table-column label="异常数据" align="center" min-width="120px">
             <template slot-scope="{row}">
               <el-button v-if="row.nums > 0" type="warning" size="mini" @click="setDialogWidth();queryOutliers(row);">
                 查看异常值
@@ -344,7 +344,8 @@ export default {
         this.total = response.data.total
         this.$message({
           message: '获取日志记录成功',
-          type: 'success'
+          type: 'success',
+          duration: 1000
         })
       })
       this.listLoading = false
@@ -383,6 +384,7 @@ export default {
         })
       })
       this.list.splice(index, 1)
+      this.total--
     },
     formatJson(filterVal, jsonData) {
       return jsonData.map(v => filterVal.map(j => {

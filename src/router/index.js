@@ -32,6 +32,17 @@ import Layout from '@/layout'
  */
 export const constantRoutes = [
   {
+    path: '/redirect',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '/redirect/:path(.*)',
+        component: () => import('@/views/redirect/index')
+      }
+    ]
+  },
+  {
     path: '/login',
     component: () => import('@/views/login/index'),
     hidden: true
@@ -128,22 +139,38 @@ export const constantRoutes = [
         meta: { title: '自定义功率预测', icon: 'example' }
       }
     ]
-  },
-
+  }
+]
+/**
+ * asyncRoutes
+ * the routes that need to be dynamically loaded based on user roles
+ */
+export const asyncRoutes = [
   {
     path: '/log',
     component: Layout,
-    redirect: '/log/index',
+    redirect: '/log/outlier',
+    alwaysShow: true,
+    meta: {
+      title: '日志',
+      icon: 'bug',
+      roles: ['admin', 'user']
+    },
     children: [
       {
-        path: 'index',
+        path: 'outlier',
         name: 'Log',
-        component: () => import('@/views/log/index'),
+        component: () => import('@/views/log/outlier/index'),
         meta: { title: '预警日志', icon: 'bug' }
+      },
+      {
+        path: 'fix',
+        name: 'Log',
+        component: () => import('@/views/log/fix/index'),
+        meta: { title: '维修日志', icon: 'bug', roles: ['admin'] }
       }
     ]
   },
-
   {
     path: '/settings',
     component: Layout,
@@ -157,11 +184,9 @@ export const constantRoutes = [
       }
     ]
   },
-
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
-
 const createRouter = () => new Router({
   mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),

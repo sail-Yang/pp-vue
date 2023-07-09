@@ -48,7 +48,7 @@
           </el-form-item>
         </el-row>
         <el-row>
-          <el-col :xs="{span: 14}" :sm="{span: 12}" :lg="{span: 11}">
+          <el-col :xs="{span: 14}" :sm="{span: 12}" :lg="{span: 6}">
             <el-form-item label="选择风机">
               <el-select v-model="form.fan" placeholder="请选择风机的编号">
                 <el-option label="1号风机" value="1" />
@@ -64,10 +64,13 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :xs="{span: 10}" :sm="{span: 12}" :lg="{span: 13}">
+          <el-col :xs="{span: 10}" :sm="{span: 12}" :lg="{span: 6}">
             <el-form-item>
-              <el-button type="primary" @click="onSubmit">提交</el-button>
-              <el-button type="info" @click="setDialogWidth();dialogVisible = true">导出</el-button>
+              <span slot="label">
+                &nbsp;
+              </span>
+              <el-button type="primary" size="small" @click="onSubmit">提交</el-button>
+              <el-button type="info" size="small" @click="setDialogWidth();dialogVisible = true">导出</el-button>
             </el-form-item>
           </el-col>
         </el-row>

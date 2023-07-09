@@ -95,7 +95,7 @@ export default {
           }
         },
         legend: {
-          top: 30,
+          top: 50,
           icon: 'rect',
           itemWidth: 14,
           itemHeight: 5,
@@ -113,7 +113,7 @@ export default {
         grid: {
           top: 100,
           left: '2%',
-          right: '4%',
+          right: 65,
           bottom: '2%',
           containLabel: true
         },

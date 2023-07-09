@@ -57,7 +57,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :xs="{span: 7}" :sm="{span: 12}" :lg="{span: 6}">
+          <el-col :xs="{span: 7}" :sm="{span: 12}" :lg="{span: 4}">
             <el-form-item label="风机" label-width="40px">
               <el-select v-model="form.fan" placeholder="请选择风机的编号" style="width:120px">
                 <el-option label="1号风机" value="1" />
@@ -74,11 +74,14 @@
             </el-form-item>
           </el-col>
           <el-col :xs="{span: 1}" :sm="{span: 2}" :lg="{span: 1}" />
-          <el-col :xs="{span: 10}" :sm="{span: 10}" :lg="{span: 12}">
+          <el-col :xs="{span: 10}" :sm="{span: 10}" :lg="{span: 15}">
             <el-form-item>
-              <el-button type="primary" @click="onSubmit">开始预测</el-button>
-              <el-button type="danger" @click="onCancel">取消预测</el-button>
-              <el-button type="info" @click="setDialogWidth();dialogVisible = true">导出预测数据</el-button>
+              <span slot="label">
+                &nbsp;
+              </span>
+              <el-button type="primary" size="small" style="margin-left:10px" @click="onSubmit">开始预测</el-button>
+              <el-button type="danger" size="small" @click="onCancel">取消预测</el-button>
+              <el-button type="info" size="small" @click="setDialogWidth();dialogVisible = true">导出预测数据</el-button>
             </el-form-item>
           </el-col>
         </el-row>
