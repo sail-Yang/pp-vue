@@ -31,6 +31,7 @@
                 type="date"
                 placeholder="结束日期"
                 :picker-options="pickerOptions"
+                @input="initForm"
               />
             </el-col>
             <el-col :xs="{span: 24}" :sm="{span: 12}" :lg="{span: 12}">
@@ -50,7 +51,7 @@
         <el-row :gutter="3" type="flex" align="middle">
           <el-col :xs="{span: 6}" :sm="{span: 12}" :lg="{span: 4}">
             <el-form-item label="预测时长" label-width="80px">
-              <el-select v-model="form.hours" placeholder="请选择时长" style="width:100px">
+              <el-select v-model="form.hours" placeholder="请选择时长" style="width:100px" @input="initForm">
                 <el-option label="12" value="12" />
                 <el-option label="24" value="24" />
                 <el-option label="36" value="36" />
@@ -79,7 +80,7 @@
               <span slot="label">
                 &nbsp;
               </span>
-              <el-button type="primary" size="small" style="margin-left:10px" @click="onSubmit">开始预测</el-button>
+              <el-button v-loading="loading" type="primary" size="small" style="margin-left:10px" @click="onSubmit">开始预测</el-button>
               <el-button type="danger" size="small" @click="onCancel">取消预测</el-button>
               <el-button type="info" size="small" @click="setDialogWidth();dialogVisible = true">导出预测数据</el-button>
             </el-form-item>
@@ -93,6 +94,7 @@
                 type="date"
                 placeholder="起始日期"
                 :picker-options="pickerOptions"
+                disabled="true"
               />
             </el-col>
             <el-col :xs="{span: 12}" :sm="{span: 12}" :lg="{span: 12}">
@@ -104,6 +106,7 @@
                   step: '00:15',
                   end: '23:30'
                 }"
+                disabled="true"
               />
             </el-col>
           </el-form-item>
@@ -114,6 +117,7 @@
                 type="date"
                 placeholder="结束日期"
                 :picker-options="pickerOptions"
+                disabled="true"
               />
             </el-col>
             <el-col :xs="{span: 24}" :sm="{span: 12}" :lg="{span: 12}">
@@ -126,6 +130,7 @@
                   minTime: predStartTime
                 }"
                 placeholder="结束时间"
+                disabled="true"
               />
             </el-col>
           </el-form-item>
@@ -141,7 +146,6 @@
       title="提示"
       :visible.sync="dialogVisible"
       :width="dialogWidth"
-      :before-close="handleClose"
     >
       <el-form :model="exportform">
         <el-form-item>
@@ -253,6 +257,32 @@ export default {
     }
   },
   methods: {
+    initForm() {
+      // 修改预测开始时间
+      var currentDate = new Date(this.form.endDate)
+      currentDate.setDate(currentDate.getDate() + 1)
+      var y = currentDate.getFullYear()
+      var m = currentDate.getMonth() + 1 < 10 ? '0' + (currentDate.getMonth() + 1) : currentDate.getMonth() + 1
+      var d = currentDate.getDate() < 10 ? '0' + currentDate.getDate() : currentDate.getDate()
+      this.form.predStartDate = y + '-' + m + '-' + d
+      // 修改预测结束时间
+      var preDate = new Date(this.form.predStartDate + ' ' + this.form.predStartTime)
+      preDate.setHours(preDate.getHours() + parseInt(this.form.hours))
+      preDate.setMinutes(preDate.getMinutes() - 15)
+      y = preDate.getFullYear()
+      m = preDate.getMonth() + 1 < 10 ? '0' + (preDate.getMonth() + 1) : preDate.getMonth() + 1
+      d = preDate.getDate() < 10 ? '0' + preDate.getDate() : preDate.getDate()
+
+      const hours = preDate.getHours()
+      const minutes = preDate.getMinutes()
+      // 格式化小时和分钟
+      const formattedHours = hours < 10 ? `0${hours}` : hours
+      const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes
+      // 构建时间字符串
+      const timeString = `${formattedHours}:${formattedMinutes}`
+      this.form.predEndDate = y + '-' + m + '-' + d
+      this.form.predEndTime = timeString
+    },
     onSubmit() {
       sessionStorage.setItem('periodFan', this.form.fan)
       this.loading = true
@@ -296,8 +326,8 @@ export default {
       this.xdata = JSON.parse(sessionStorage.getItem('periodXdata'))
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['datatime', 'yd15', 'power', 'prePower']
-        const filterVal = ['datatime', 'yd15', 'power', 'prePower']
+        const tHeader = ['datatime', '实际功率', '预测功率(yd15)', '预测功率(备选,power)' ]
+        const filterVal = ['datatime', 'yd15', 'yd15Pre', 'power']
         const list = this.xdata.fanDataList
         const data = this.formatJson(filterVal, list)
         excel.export_json_to_excel({

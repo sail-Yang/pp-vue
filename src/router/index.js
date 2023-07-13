@@ -68,7 +68,7 @@ export const constantRoutes = [
       path: '/index',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: '首页', icon: 'dashboard', noCache: true }
+      meta: { title: '总控台', icon: 'dashboard', noCache: true }
     }]
   },
 
@@ -152,7 +152,7 @@ export const asyncRoutes = [
     redirect: '/log/outlier',
     alwaysShow: true,
     meta: {
-      title: '日志',
+      title: '管理日志',
       icon: 'bug',
       roles: ['admin', 'user']
     },

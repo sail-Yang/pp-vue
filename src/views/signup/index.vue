@@ -1,14 +1,4 @@
 <template>
-  <!-- <el-header>
-    <div class="sidebar-logo-container">
-      <transition name="sidebarLogoFade">
-        <router-link v-if="true" key="true" class="sidebar-logo-link" to="/ogin">
-          <img :src="logo" class="sidebar-logo">
-          <h1 class="sidebar-title">{{ title }} </h1>
-        </router-link>
-      </transition>
-    </div>
-  </el-header> -->
   <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 12}" :lg="{span: 10}" :xl="{span:24}">
     <div class="signup-container">
       <el-row :gutter="3" type="flex" align="middle">
@@ -21,6 +11,9 @@
               class="login-form"
               label-position="left"
             >
+              <div class="title">
+                <img src="@/assets/logo/logo-text.png" />
+              </div>
               <el-form-item prop="username" :rules="signupRoles">
                 <span class="svg-container">
                   <svg-icon icon-class="user" />
@@ -151,7 +144,7 @@ export default {
       }
     }
     return {
-      title: '功率先知',
+      title: '功率预测管理平台',
       logo: 'https://cdn.staticaly.com/gh/sail-Yang/myImage@main/img/logo_transparent.444truy0g380.png',
       signUpForm: {
         username: '',
@@ -351,5 +344,15 @@ $light_gray:#eee;
 
 .el-col {
   min-height: 1px
+}
+
+.title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 150px
+  img {
+    height: 100%;
+  }
 }
 </style>

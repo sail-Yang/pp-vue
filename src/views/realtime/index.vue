@@ -86,7 +86,6 @@
       title="提示"
       :visible.sync="dialogVisible"
       :width="dialogWidth"
-      :before-close="handleClose"
     >
       <el-form :model="exportform">
         <el-form-item>
@@ -249,8 +248,8 @@ export default {
       this.xdata = JSON.parse(sessionStorage.getItem('realXdata'))
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['datatime', 'yd15', 'power', 'prePower']
-        const filterVal = ['datatime', 'yd15', 'power', 'prePower']
+        const tHeader = ['datatime', '实际功率', '预测功率(yd15)', '预测功率(备选,power)' ]
+        const filterVal = ['datatime', 'yd15', 'yd15Pre', 'power']
         const list = this.xdata.fanDataList
         const data = this.formatJson(filterVal, list)
         excel.export_json_to_excel({

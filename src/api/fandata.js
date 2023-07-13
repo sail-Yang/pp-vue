@@ -50,7 +50,7 @@ export function fetchFans() {
 
 export function fetchDatas() {
   return request({
-    url: '/fandata/datas',
+    url: '/fandata/getavg',
     method: 'get'
   })
 }

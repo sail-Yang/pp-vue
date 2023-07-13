@@ -46,7 +46,7 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            训练数据量
+            当日平均风机功率
           </div>
           <count-to :start-val="0" :end-val="datas" :duration="3600" class="card-panel-num" />
         </div>
@@ -93,7 +93,7 @@ export default {
     getDatas() {
       fetchDatas().then(
         response => {
-          this.datas = response.data.datas
+          this.datas = response.data.avg
         }
       )
     }

@@ -242,7 +242,7 @@ const modelKeyValue = modelOptions.reduce((acc, cur) => {
 
 const typeOptions = [
   { key: 'real', display_name: '实时预测' },
-  { key: 'period', display_name: '范围预测' }
+  { key: 'period', display_name: '自定义预测' }
 ]
 
 const typeKeyValue = typeOptions.reduce((acc, cur) => {
@@ -318,7 +318,7 @@ export default {
       outlierDownloadLoading: false,
       typeMap: new Map([
         ['real', '实时预测'],
-        ['period', '范围预测']
+        ['period', '自定义预测']
       ]),
       modelMap: new Map([
         ['single', '单模型(LSTM)'],

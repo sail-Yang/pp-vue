@@ -5,6 +5,9 @@
       <el-col :xs="{span: 0}" :sm="{span: 12}" :md="{span: 6}" :lg="{span: 7}" :xl="{span: 8}" />
       <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 12}" :lg="{span: 10}" :xl="{span: 8}">
         <div class="form-container">
+          <div class="title">
+            <img src="@/assets/logo/logo-text.png" />
+          </div>
           <el-tabs v-model="activeName" @tab-click="handleClick">
             <el-tab-pane label="账号密码登录" name="first">
               <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
@@ -356,5 +359,15 @@ $light_gray:#eee;
 }
 .el-col {
   min-height: 1px
+}
+
+.title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 150px
+  img {
+    height: 100%;
+  }
 }
 </style>

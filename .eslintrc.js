@@ -69,6 +69,18 @@ module.exports = {
       'newIsCap': true,
       'capIsNew': false
     }],
+    'vue/html-self-closing': [
+      'error',
+      {
+        html: {
+          void: 'always',
+          normal: 'never',
+          component: 'always'
+        },
+        svg: 'always',
+        math: 'always'
+      }
+    ],
     'new-parens': 2,
     'no-array-constructor': 2,
     'no-caller': 2,

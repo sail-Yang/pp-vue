@@ -85,7 +85,6 @@
       title="提示"
       :visible.sync="dialogVisible"
       :width="dialogWidth"
-      :before-close="handleClose"
     >
       <el-form :model="exportform">
         <el-form-item>

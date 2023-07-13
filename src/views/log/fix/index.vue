@@ -192,7 +192,7 @@ export default {
       logDownloadLoading: false,
       statusMap: new Map([
         ['real', '实时预测'],
-        ['period', '范围预测']
+        ['period', '自定义预测']
       ])
     }
   },
@@ -269,8 +269,8 @@ export default {
     handleLogDownload() {
       this.logDownloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['日志编号', '记录时间', '风机编号', '预测类型', '预测模型', '开始预测时间', '结束预测时间', '预测结果']
-        const filterVal = ['id', 'date', 'fanId', 'type', 'model', 'startTime', 'endTime', 'status']
+        const tHeader = ['日志编号', '维修人员编号', '维修人员名称', '风机号', '开始维修时间', '结束维修时间', '当前状态']
+        const filterVal = ['id', 'userId', 'userName', 'fanId', 'startTime', 'endTime', 'status']
         const list = this.list
         const data = this.formatJson(filterVal, list)
         excel.export_json_to_excel({

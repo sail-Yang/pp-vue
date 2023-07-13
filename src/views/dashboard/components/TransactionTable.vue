@@ -25,18 +25,18 @@
     <el-table-column label="维修人员" align="center">
       <template slot-scope="scope">
         <div v-if="scope.row.userId > 0 && checkPermission(['user'])">
-          <el-button type="primary" size="mini">
-            {{ scope.row.userName }}
+          <el-button type="primary" size="mini" style="width: 85px;">
+            {{ scope.row.userId }}
           </el-button>
         </div>
         <div v-else-if="scope.row.userId > 0 && checkPermission(['admin'])">
           <el-dropdown @command="handleCommand">
-            <el-button type="primary" size="mini">
-              {{ scope.row.userName }}<i class="el-icon-arrow-down el-icon--right" />
+            <el-button type="primary" size="mini" style="width: 85px;">
+              {{ scope.row.userId }}<i class="el-icon-arrow-down el-icon--right" />
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item v-for="(item,index) in usernames" :key="index" :command="beforeHandleCommand(scope.$index,item,scope.row.id)">
-                {{ item }}
+              <el-dropdown-item v-for="(item,index) in userList" :key="index" :command="beforeHandleCommand(scope.$index,item.userName,scope.row.id)">
+                {{ item.id+" : "+item.userName }}
               </el-dropdown-item>
               <el-dropdown-item v-if="scope.row.userName !== '指派'" :command="beforeHandleCommand(scope.$index,'cancel',scope.row.id)">
                 <el-tag type="danger" size="mini">取消</el-tag>
@@ -46,17 +46,12 @@
         </div>
         <div v-else-if="scope.row.userId == 0 && checkPermission(['admin'])">
           <el-dropdown @command="handleCommand">
-            <el-button type="primary" size="mini">
-              <div v-if="scope.row.userName === '' || scope.row.userName === null">
-                指派<i class="el-icon-arrow-down el-icon--right" />
-              </div>
-              <div v-else>
-                {{ scope.row.userName }}<i class="el-icon-arrow-down el-icon--right" />
-              </div>
+            <el-button type="primary" size="mini" style="width: 85px;">
+              指派<i class="el-icon-arrow-down el-icon--right" />
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item v-for="(item,index) in usernames" :key="index" :command="beforeHandleCommand(scope.$index,item,scope.row.id)">
-                {{ item }}
+              <el-dropdown-item v-for="(item,index) in userList" :key="index" :command="beforeHandleCommand(scope.$index,item.userName,scope.row.id)">
+                {{ item.id+" : "+item.userName }}
               </el-dropdown-item>
               <el-dropdown-item v-if="scope.row.userName !== '指派' && scope.row.userName !== '' && scope.row.userName !== null" :command="beforeHandleCommand(scope.$index,'cancel',scope.row.id)">
                 <el-tag type="danger" size="mini">取消</el-tag>
@@ -84,7 +79,7 @@ export default {
   data() {
     return {
       list: null,
-      usernames: null
+      userList: null
     }
   },
   created() {
@@ -92,8 +87,8 @@ export default {
   },
   mounted() {
     getUserNames().then(response => {
-      const { data } = response
-      this.usernames = data
+      const { users } = response.data
+      this.userList = users
     })
   },
   methods: {
@@ -114,6 +109,7 @@ export default {
       if (command.username !== 'cancel') {
         this.list[command.index].userName = command.username
         updateFanUser(command.fanId, command.username).then((res) => {
+          this.list[command.index].userId = res.data.id
           this.$message({
             message: '指派成功',
             type: 'success'
@@ -122,6 +118,7 @@ export default {
       } else {
         this.list[command.index].userName = '指派'
         updateFanUser(command.fanId, 'cancel').then((res) => {
+          this.list[command.index].userId = 0
           this.$message({
             message: '取消成功',
             type: 'success'

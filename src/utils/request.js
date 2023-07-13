@@ -8,7 +8,7 @@ const service = axios.create({
   // baseURL: 'http://192.168.137.1:8081/power', // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
   baseURL: 'http://111.231.32.48:8081/power',
-  // baseURL: 'http://localhost:8081/power',
+  // baseURL: 'http://localhost:8099/power',
   timeout: 500000, // request timeout
   withCredentials: false
 })

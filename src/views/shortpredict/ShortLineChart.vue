@@ -100,14 +100,13 @@ export default {
           itemWidth: 14,
           itemHeight: 5,
           itemGap: 13,
-          data: ['预测功率(YD15)', '实际功率(PREPOWER)', '预测功率(备选,ROUND(A.POWER,0))'],
+          data: ['预测功率(YD15)', '实际功率', '预测功率(备选,ROUND(A.POWER,0))'],
           right: '4%',
           textStyle: {
             fontSize: 12,
             color: '#F1F1F3'
           }, selected: {
-            '预测功率(备选,ROUND(A.POWER,0))': false,
-            '实际功率(PREPOWER)': false
+            '预测功率(备选,ROUND(A.POWER,0))': false
           }
         },
         grid: {
@@ -185,7 +184,7 @@ export default {
 
             }
           },
-          data: this.xdata.fanDataList.map(item => item.yd15)
+          data: this.xdata.fanDataList.map(item => item.yd15Pre)
         }, {
           name: '预测功率(备选,ROUND(A.POWER,0))',
           type: 'line',
@@ -221,7 +220,7 @@ export default {
           },
           data: this.xdata.fanDataList.map(item => item.power)
         }, {
-          name: '实际功率(PREPOWER)',
+          name: '实际功率',
           type: 'line',
           smooth: true,
           symbol: 'circle',
@@ -252,7 +251,7 @@ export default {
               borderWidth: 12
             }
           },
-          data: this.xdata.fanDataList.map(item => item.prePower)
+          data: this.xdata.fanDataList.map(item => item.yd15)
         }]
       })
       this.loading = false
