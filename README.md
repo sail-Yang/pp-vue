@@ -1,5 +1,5 @@
 # pp-vue
-Power Prophet System's frontend based on vue-admin-template
+Power Prophet System's frontend based on [vue-admin-template](https://github.com/PanJiaChen/vue-admin-template)
 # 配置说明
 
 前端主配置文件为`vue.config.js`，可以进行自定义配置。
