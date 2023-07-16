@@ -297,7 +297,8 @@ $light_gray:#eee;
   .form-container {
     border-radius: 15px;
     background-clip: padding-box;
-    margin: 200px auto;
+    margin-top: 20%;
+    margin-bottom: 20%;
     padding: 35px 35px 35px 35px;
     background: #fff;
     border: 1px solid #eaeaea;

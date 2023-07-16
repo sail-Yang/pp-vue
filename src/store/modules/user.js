@@ -101,6 +101,7 @@ const actions = {
         commit('SET_ROLES', roles)
         commit('SET_USERNAME', name)
         commit('SET_AVATAR', avatar)
+        commit('SET_VISITNUMS', data.visitNums)
         resolve(data)
       }).catch(error => {
         reject(error)

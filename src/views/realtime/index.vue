@@ -216,10 +216,10 @@ export default {
     onReal() {
       this.loading = true
       sessionStorage.setItem('realLoading', this.loading)
-      sessionStorage.setItem('realFan', this.form.fan)
       predictByRealTime(this.$store.getters.username, this.form.fan, this.$store.getters.model).then(
         response => {
           sessionStorage.setItem('realXdata', JSON.stringify(response.data))
+          sessionStorage.setItem('realFan', this.form.fan)
           this.xdata = JSON.parse(sessionStorage.getItem('realXdata'))
           this.$message({
             message: '获取实时成功',
@@ -229,10 +229,6 @@ export default {
           sessionStorage.setItem('realLoading', this.loading)
         }
       ).catch(() => {
-        this.$message({
-          message: '服务器错误',
-          type: 'failure'
-        })
         this.loading = false
         sessionStorage.setItem('realLoading', this.loading)
       })
@@ -248,7 +244,7 @@ export default {
       this.xdata = JSON.parse(sessionStorage.getItem('realXdata'))
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['datatime', '实际功率', '预测功率(yd15)', '预测功率(备选,power)' ]
+        const tHeader = ['datatime', '实际功率', '预测功率(yd15)', '预测功率(备选,power)']
         const filterVal = ['datatime', 'yd15', 'yd15Pre', 'power']
         const list = this.xdata.fanDataList
         const data = this.formatJson(filterVal, list)

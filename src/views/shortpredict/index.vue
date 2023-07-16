@@ -3,7 +3,17 @@
     <el-row>
       <el-form :model="form" :inline="true">
         <el-row :gutter="3" type="flex" align="middle">
-          <el-form-item label="训练集开始时间" label-width="120px">
+          <el-form-item label-width="140px">
+            <span slot="label">
+              训练集开始时间
+              <el-tooltip class="item" effect="dark">
+                <i class="el-icon-info"></i>
+                <div slot="content">
+                  {{ form.fan }}号风机训练集可用时间范围：<br />
+                  {{ tipValue }}
+                </div>
+              </el-tooltip>
+            </span>
             <el-col :xs="{span: 24}" :sm="{span: 12}" :lg="{span: 12}">
               <el-date-picker
                 v-model="form.startDate"
@@ -12,7 +22,7 @@
                 :picker-options="pickerOptions"
               />
             </el-col>
-            <el-col :xs="{span: 12}" :sm="{span: 12}" :lg="{span: 12}">
+            <el-col :xs="{span: 24}" :sm="{span: 12}" :lg="{span: 12}">
               <el-time-select
                 v-model="form.startTime"
                 placeholder="起始时间"
@@ -24,7 +34,17 @@
               />
             </el-col>
           </el-form-item>
-          <el-form-item label="训练集结束时间" label-width="120px">
+          <el-form-item label-width="130px">
+            <span slot="label">
+              训练集结束时间
+              <el-tooltip class="item" effect="dark">
+                <i class="el-icon-info"></i>
+                <div slot="content">
+                  {{ form.fan }}号风机训练集可用时间范围：<br />
+                  {{ tipValue }}
+                </div>
+              </el-tooltip>
+            </span>
             <el-col :xs="{span: 24}" :sm="{span: 12}" :lg="{span: 12}">
               <el-date-picker
                 v-model="form.endDate"
@@ -60,7 +80,7 @@
           </el-col>
           <el-col :xs="{span: 7}" :sm="{span: 12}" :lg="{span: 4}">
             <el-form-item label="风机" label-width="40px">
-              <el-select v-model="form.fan" placeholder="请选择风机的编号" style="width:120px">
+              <el-select v-model="form.fan" placeholder="请选择风机的编号" style="width:120px" @change="updateTipValue">
                 <el-option label="1号风机" value="1" />
                 <el-option label="2号风机" value="2" />
                 <el-option label="3号风机" value="3" />
@@ -80,7 +100,9 @@
               <span slot="label">
                 &nbsp;
               </span>
-              <el-button v-loading="loading" type="primary" size="small" style="margin-left:10px" @click="onSubmit">开始预测</el-button>
+              <el-tooltip class="item" effect="dark" content="训练集时间段必须大于两个月" placement="top">
+                <el-button v-loading="loading" type="primary" size="small" style="margin-left:10px" @click="onSubmit">开始预测</el-button>
+              </el-tooltip>
               <el-button type="danger" size="small" @click="onCancel">取消预测</el-button>
               <el-button type="info" size="small" @click="setDialogWidth();dialogVisible = true">导出预测数据</el-button>
             </el-form-item>
@@ -185,8 +207,8 @@
 
 <script>
 import Chart from '@/views/shortpredict/ShortLineChart'
-import { predictByPeriod } from '@/api/fandata'
-import { formDateFormat } from '@/utils'
+import { predictByPeriod, fetchTimeRange } from '@/api/fandata'
+import { formDateFormat, parseTime } from '@/utils'
 export default {
   name: 'Short',
   components: { Chart },
@@ -237,7 +259,8 @@ export default {
         }]
       },
       loading: false,
-      abortController: new AbortController()
+      abortController: new AbortController(),
+      tipValue: ''
     }
   },
   mounted() {
@@ -255,6 +278,7 @@ export default {
     } else {
       this.form.fan = sessionStorage.getItem('periodFan')
     }
+    this.updateTipValue()
   },
   methods: {
     initForm() {
@@ -284,14 +308,25 @@ export default {
       this.form.predEndTime = timeString
     },
     onSubmit() {
-      sessionStorage.setItem('periodFan', this.form.fan)
-      this.loading = true
-      sessionStorage.setItem('periodLoading', this.loading)
+      // 计算时间差，训练集时间段必须大于两个月
       var beginTime = formDateFormat(this.form.startDate, this.form.startTime)
       var endTime = formDateFormat(this.form.endDate, this.form.endTime)
+      var beginDate = new Date(beginTime)
+      var endDate = new Date(endTime)
+      // 单位为ms
+      if (endDate - beginDate <= 5184000000) {
+        this.$message({
+          message: '训练集时间段必须大于两个月',
+          type: 'warning'
+        })
+        return
+      }
+      this.loading = true
+      sessionStorage.setItem('periodLoading', this.loading)
       predictByPeriod(this.$store.getters.username, beginTime, endTime, this.form.hours, this.form.fan, this.abortController.signal, this.$store.getters.model).then(
         response => {
           sessionStorage.setItem('periodXdata', JSON.stringify(response.data))
+          sessionStorage.setItem('periodFan', this.form.fan)
           this.xdata = JSON.parse(sessionStorage.getItem('periodXdata'))
           this.$message({
             message: '预测成功',
@@ -326,7 +361,7 @@ export default {
       this.xdata = JSON.parse(sessionStorage.getItem('periodXdata'))
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['datatime', '实际功率', '预测功率(yd15)', '预测功率(备选,power)' ]
+        const tHeader = ['datatime', '实际功率', '预测功率(yd15)', '预测功率(备选,power)']
         const filterVal = ['datatime', 'yd15', 'yd15Pre', 'power']
         const list = this.xdata.fanDataList
         const data = this.formatJson(filterVal, list)
@@ -346,7 +381,6 @@ export default {
       }))
     },
     setDialogWidth() {
-      console.log(document.body.clientWidth)
       var val = document.body.clientWidth
       const def = 600 // 默认宽度
       if (val < def) {
@@ -354,6 +388,15 @@ export default {
       } else {
         this.dialogWidth = def + 'px'
       }
+    },
+    updateTipValue() {
+      fetchTimeRange(this.form.fan).then(
+        response => {
+          const beginDate = new Date(response.data.min)
+          const endDate = new Date(response.data.max)
+          this.tipValue = parseTime(beginDate) + ' ~ ' + parseTime(endDate)
+        }
+      )
     }
   }
 }

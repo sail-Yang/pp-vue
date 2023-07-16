@@ -1,5 +1,5 @@
 <template>
-  <div :id="id" v-loading="loading" element-loading-text="拼命加载中" :class="className" :style="{height:height,width:width}" />
+  <div :id="id" v-loading="loading" element-loading-text="拼命加载中" :class="className" :style="{height:height,width:width}"></div>
 </template>
 
 <script>
@@ -54,13 +54,7 @@ export default {
           sessionStorage.setItem('periodXdata', JSON.stringify(response.data))
           this.xdata = JSON.parse(sessionStorage.getItem('periodXdata'))
         }
-      ).catch(() => {
-        this.$message({
-          message: '服务器错误',
-          type: 'failure'
-        })
-        this.loading = false
-      })
+      )
     }
     this.initChart()
   },

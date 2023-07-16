@@ -70,3 +70,11 @@ export function updateFanUser(fanid, username) {
     params: { username, fanid }
   })
 }
+
+export function fetchTimeRange(fanid) {
+  return request({
+    url: '/fandata/timerange',
+    method: 'get',
+    params: { fanid }
+  })
+}

@@ -24,7 +24,7 @@ export default {
   },
   data() {
     return {
-      title: '风电功率预测管理平台',
+      title: '风驰电测',
       logo: 'https://cdn.staticaly.com/gh/sail-Yang/myImage@main/img/风电场.i0lkbxafju0.svg'
     }
   }
